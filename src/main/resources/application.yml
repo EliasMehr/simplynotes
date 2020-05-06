@@ -1,13 +1,15 @@
-spring:
+app:
   datasource:
-    data-username: ${DB_USER}
-   # data-password: ${DB_PASS}
-    driver-class-name: org.postgresql.Driver
-    url: ${DB_URL}
+    jdbc-url: ${DB_URL}
+    username: ${DB_USER}
+    password: ${DB_PASS}
+    pool-size: 30
+
+spring:
 
   jpa:
     hibernate:
-      ddl-auto: none # ändra till önskat val
+      ddl-auto: create-drop
 
     properties:
       hibernate:
