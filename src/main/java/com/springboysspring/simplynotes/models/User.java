@@ -1,9 +1,8 @@
 package com.springboysspring.simplynotes.models;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.HashSet;
@@ -11,8 +10,7 @@ import java.util.Set;
 import java.util.UUID;
 
 @Entity(name = "Users")
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 public class User {
 
