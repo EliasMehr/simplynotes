@@ -10,7 +10,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
-@Entity
+@Entity(name = "Users")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -47,6 +47,14 @@ public class User {
     @ManyToMany(fetch = FetchType.LAZY, mappedBy = "attendees")
     private Set<Appointment> appointments = new HashSet<>();
 
+    @JsonManagedReference
+    @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Friendship> friendships = new HashSet<>();
+
+    public void addFriend(User friend) {
+        friendships.add(new Friendship(this, friend));
+        friend.friendships.add(new Friendship(friend, this));
+    }
 
     public void addNote(Note note) {
         notes.add(note);

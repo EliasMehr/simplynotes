@@ -3,19 +3,22 @@ package com.springboysspring.simplynotes.models;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.UUID;
 
 @Entity
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 public class Friendship {
+
+    public Friendship(User owner, User friend) {
+        this.owner = owner;
+        this.friend = friend;
+    }
 
     @EmbeddedId
     @JsonIgnore
@@ -39,8 +42,7 @@ public class Friendship {
         ACCEPTED, PENDING, DECLINED
     }
 
-    @Getter
-    @Setter
+    @Data
     @NoArgsConstructor
     @Embeddable
     public static class FriendshipId implements Serializable {
