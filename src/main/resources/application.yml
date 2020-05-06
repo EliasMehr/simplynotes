@@ -1,0 +1,16 @@
+spring:
+  datasource:
+    data-username: ${DB_USER}
+   # data-password: ${DB_PASS}
+    driver-class-name: org.postgresql.Driver
+    url: ${DB_URL}
+
+  jpa:
+    hibernate:
+      ddl-auto: none # ändra till önskat val
+
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+  jooq:
+    sql-dialect: Postgres
