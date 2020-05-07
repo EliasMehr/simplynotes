@@ -3,8 +3,11 @@ package com.springboysspring.simplynotes.models;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.validator.constraints.UniqueElements;
+import org.springframework.format.annotation.NumberFormat;
 
 import javax.persistence.*;
+import javax.validation.constraints.*;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -21,11 +24,24 @@ public class User {
     @GeneratedValue
     private UUID id;
 
+    @NotBlank
+    @Size(min = 2, max = 20)
+    @Pattern(regexp = "([a-zA-ZAÖÅöäå]{2,})|([a-zA-ZöäåÅÖÄ-]){2,}([ ]?)([a-zA-ZöäåÅÖÄ]){2,}", message = "Invalid name format")
     private String firstName;
+
+    @NotBlank
+    @Size(min = 2, max = 20)
+    @Pattern(regexp = "([a-zA-ZAÖÅöäå]{2,})|([a-zA-ZöäåÅÖÄ-]){2,}([ ]?)([a-zA-ZöäåÅÖÄ]){2,}", message = "Invalid name format")
     private String lastName;
 
+    @NotBlank
+    @Size(min = 2, max = 20)
     @Column(unique = true)
+    @Pattern(regexp = "^[_A-Za-z0-9-]+(.[_A-Za-z0-9-]+)@[A-Za-z0-9]+(.[A-Za-z0-9]+)(.[A-Za-z]{2,})$", message = "Invalid email format")
     private String email;
+
+    @NotBlank
+    @Size(min = 50, max = 100)
     private String password;
 
     @ManyToOne(fetch = LAZY, cascade = ALL)

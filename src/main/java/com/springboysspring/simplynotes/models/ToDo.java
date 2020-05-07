@@ -3,8 +3,12 @@ package com.springboysspring.simplynotes.models;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -19,9 +23,18 @@ public class ToDo {
     @Id
     @GeneratedValue
     private UUID id;
+
+    @NotBlank
+    @Size(min = 1, max = 20)
     private String title;
+
+    @NotNull
     private LocalDateTime timestamp = LocalDateTime.now();
+
+    @Size(max = 5000)
     private String content;
+
+
     private LocalDateTime deadline;
 
     @JsonBackReference

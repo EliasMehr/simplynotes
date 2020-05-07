@@ -9,6 +9,7 @@ public class SimplynotesApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(SimplynotesApplication.class, args);
+
     }
 
 
