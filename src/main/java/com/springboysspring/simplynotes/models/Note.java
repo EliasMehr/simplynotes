@@ -14,7 +14,7 @@ import java.util.UUID;
 public class Note {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue
     private UUID id;
     private String title;
     private String content;

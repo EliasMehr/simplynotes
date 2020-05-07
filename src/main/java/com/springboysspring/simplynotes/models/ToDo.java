@@ -8,13 +8,16 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import static javax.persistence.EnumType.STRING;
+import static javax.persistence.FetchType.LAZY;
+
 @Entity
 @Data
 @NoArgsConstructor
 public class ToDo {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue
     private UUID id;
     private String title;
     private LocalDateTime timestamp = LocalDateTime.now();
@@ -22,10 +25,10 @@ public class ToDo {
     private LocalDateTime deadline;
 
     @JsonBackReference
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User owner;
 
-    @Enumerated(EnumType.STRING)
+    @Enumerated(STRING)
     private Priority priority;
 }

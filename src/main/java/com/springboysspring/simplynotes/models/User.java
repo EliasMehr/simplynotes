@@ -9,13 +9,16 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
+import static javax.persistence.CascadeType.ALL;
+import static javax.persistence.FetchType.LAZY;
+
 @Entity(name = "Users")
 @Data
 @NoArgsConstructor
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue
     private UUID id;
 
     private String firstName;
@@ -25,28 +28,28 @@ public class User {
     private String email;
     private String password;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = LAZY, cascade = ALL)
     @JoinColumn(name = "role_id")
     private Role role;
 
     @JsonManagedReference
-    @OneToMany(fetch = FetchType.LAZY,
+    @OneToMany(fetch = LAZY,
             mappedBy = "owner",
-            cascade = CascadeType.ALL)
+            cascade = ALL)
     private Set<Note> notes = new HashSet<>();
 
     @JsonManagedReference
-    @OneToMany(fetch = FetchType.LAZY,
+    @OneToMany(fetch = LAZY,
             mappedBy = "owner",
-            cascade = CascadeType.ALL)
+            cascade = ALL)
     private Set<ToDo> todos = new HashSet<>();
 
     @JsonManagedReference
-    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "attendees")
+    @ManyToMany(fetch = LAZY, mappedBy = "attendees")
     private Set<Appointment> appointments = new HashSet<>();
 
     @JsonManagedReference
-    @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "owner", cascade = ALL, orphanRemoval = true)
     private Set<Friendship> friendships = new HashSet<>();
 
     public void addFriend(User friend) {
