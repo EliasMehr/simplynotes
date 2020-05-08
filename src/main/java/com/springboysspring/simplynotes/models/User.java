@@ -44,7 +44,8 @@ public class User {
             cascade = ALL)
     private Set<ToDo> todos = new HashSet<>();
 
-    @JsonManagedReference
+    // Något med den som gör att man ej kan kalla på rest apin.
+//    @JsonManagedReference
     @ManyToMany(fetch = LAZY, mappedBy = "attendees")
     private Set<Appointment> appointments = new HashSet<>();
 
