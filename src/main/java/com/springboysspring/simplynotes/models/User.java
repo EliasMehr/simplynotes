@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -21,11 +22,16 @@ public class User {
     @GeneratedValue
     private UUID id;
 
+    @NotNull
     private String firstName;
+
+    @NotNull
     private String lastName;
 
+    @NotNull
     @Column(unique = true)
     private String email;
+    @NotNull
     private String password;
 
     @ManyToOne(fetch = LAZY, cascade = ALL)

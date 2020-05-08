@@ -8,6 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/")
 public class UserController {
@@ -16,7 +19,7 @@ public class UserController {
     UserRepository userRepository;
 
     @PostMapping("/register")
-    public void create(@RequestBody User user) {
+    public void create(@Valid @RequestBody User user) {
         Role role = new Role();
         role.setType(Type.USER);
         user.setRole(role);
