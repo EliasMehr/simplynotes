@@ -37,6 +37,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .and()
                 .formLogin()
                 .defaultSuccessUrl("/api/v1", true)
+
                 .and()
                 .rememberMe().tokenValiditySeconds((int) TimeUnit.DAYS.toSeconds(21))
 //                    .rememberMe().tokenValiditySeconds((int)TimeUnit.DAYS.toSeconds(21))
