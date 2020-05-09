@@ -16,6 +16,8 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
   jooq:
     sql-dialect: Postgres
+  thymeleaf:
+    enabled: false
 
 regexp:
   name: ([a-zA-ZAÖÅöäå]{2,})|([a-zA-ZöäåÅÖÄ-]){2,}([ ]?)([a-zA-ZöäåÅÖÄ]){2,}
