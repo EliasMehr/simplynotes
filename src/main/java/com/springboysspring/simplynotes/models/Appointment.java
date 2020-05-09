@@ -1,6 +1,7 @@
 package com.springboysspring.simplynotes.models;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -24,7 +25,7 @@ public class Appointment {
     private String description;
     private int estimatedTime;
 
-    @JsonBackReference
+    @JsonIgnoreProperties("appointments")
     @ManyToMany
     @JoinTable(
             name = "appointment_users",

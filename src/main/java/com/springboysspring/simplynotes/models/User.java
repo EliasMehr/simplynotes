@@ -1,5 +1,6 @@
 package com.springboysspring.simplynotes.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -55,7 +56,7 @@ public class User {
     private Set<ToDo> todos = new HashSet<>();
 
     // Något med den som gör att man ej kan kalla på rest apin.
-//    @JsonManagedReference
+    @JsonIgnoreProperties("attendees")
     @ManyToMany(fetch = LAZY, mappedBy = "attendees")
     private Set<Appointment> appointments = new HashSet<>();
 
