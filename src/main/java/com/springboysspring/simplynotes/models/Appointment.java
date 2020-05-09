@@ -1,10 +1,9 @@
 package com.springboysspring.simplynotes.models;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.format.annotation.NumberFormat;
-
 import javax.persistence.*;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
@@ -36,7 +35,7 @@ public class Appointment {
     @Min(value = 0, message = "Only positive number of minutes allowed")
     private int estimatedTime;
 
-    @JsonBackReference
+    @JsonIgnoreProperties("appointments")
     @ManyToMany
     @JoinTable(
             name = "appointment_users",

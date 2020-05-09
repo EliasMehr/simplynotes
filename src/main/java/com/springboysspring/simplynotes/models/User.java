@@ -1,11 +1,10 @@
 package com.springboysspring.simplynotes.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.validator.constraints.UniqueElements;
-import org.springframework.format.annotation.NumberFormat;
-
 import javax.persistence.*;
 import javax.validation.constraints.*;
 import java.util.HashSet;
@@ -13,6 +12,7 @@ import java.util.Set;
 import java.util.UUID;
 
 import static javax.persistence.CascadeType.ALL;
+import static javax.persistence.FetchType.EAGER;
 import static javax.persistence.FetchType.LAZY;
 
 @Entity(name = "Users")
@@ -44,29 +44,38 @@ public class User {
     @Size(min = 50, max = 100)
     private String password;
 
-    @ManyToOne(fetch = LAZY, cascade = ALL)
+    @ManyToOne(fetch = EAGER, cascade = ALL)
     @JoinColumn(name = "role_id")
-    private Role role;
+    private Role role = defaultRole();
 
     @JsonManagedReference
-    @OneToMany(fetch = LAZY,
+    @OneToMany(fetch = EAGER,
             mappedBy = "owner",
             cascade = ALL)
     private Set<Note> notes = new HashSet<>();
 
+
     @JsonManagedReference
-    @OneToMany(fetch = LAZY,
+    @OneToMany(fetch = EAGER,
             mappedBy = "owner",
             cascade = ALL)
     private Set<ToDo> todos = new HashSet<>();
 
-    @JsonManagedReference
-    @ManyToMany(fetch = LAZY, mappedBy = "attendees")
+    @JsonIgnoreProperties("attendees")
+    @ManyToMany(fetch = EAGER, mappedBy = "attendees")
     private Set<Appointment> appointments = new HashSet<>();
 
     @JsonManagedReference
-    @OneToMany(mappedBy = "owner", cascade = ALL, orphanRemoval = true)
+    @OneToMany(fetch = EAGER,mappedBy = "owner", cascade = ALL, orphanRemoval = true)
     private Set<Friendship> friendships = new HashSet<>();
+
+    public Role defaultRole() {
+        Role role = new Role();
+        role.setId(UUID.randomUUID());
+        role.setType(Type.USER);
+
+        return role;
+    }
 
     public void addFriend(User friend) {
         friendships.add(new Friendship(this, friend));
