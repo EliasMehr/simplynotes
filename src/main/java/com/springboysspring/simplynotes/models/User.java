@@ -5,6 +5,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.HashSet;
 import java.util.Set;
@@ -22,16 +24,18 @@ public class User {
     @GeneratedValue
     private UUID id;
 
-    @NotNull
+    @NotEmpty(message = "First name: input required")
     private String firstName;
 
-    @NotNull
+    @NotEmpty(message = "Last name: input required")
     private String lastName;
 
-    @NotNull
+    @NotEmpty(message = "Email: input required")
+    @Email(message = "Email: invalid input [exemple@exemple.ex]")
     @Column(unique = true)
     private String email;
-    @NotNull
+
+    @NotEmpty(message = "Password: input required")
     private String password;
 
     @ManyToOne(fetch = LAZY, cascade = ALL)
