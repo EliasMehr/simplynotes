@@ -14,6 +14,7 @@ export default class Register extends Component {
             {
                 firstName: "",
                 lastName: "",
+                username: "",
                 email: "",
                 password: "",
 
@@ -26,6 +27,7 @@ export default class Register extends Component {
         this.onChangeLastName = this.onChangeLastName.bind(this);
         this.onChangeEmail = this.onChangeEmail.bind(this);
         this.onChangePassword = this.onChangePassword.bind(this);
+        this.onChangeUsername = this.onChangeUsername.bind(this);
 
     }
 
@@ -35,11 +37,12 @@ export default class Register extends Component {
     {
         e.preventDefault();
 
-         axios.post(API_URL + "register", {
+         axios.post(API_URL + "api/auth/signup", {
             firstName: this.state.firstName,
             lastName: this.state.lastName,
             email: this.state.email,
-            password: this.state.password
+            password: this.state.password,
+            username: this.state.username
         })
             .then(res => {
                 console.log(res);
@@ -55,6 +58,7 @@ export default class Register extends Component {
 
 
     }
+
 
     onChangeFirstName(e) {
         this.setState({
@@ -78,6 +82,12 @@ export default class Register extends Component {
         this.setState({
             password: e.target.value
         });
+    }
+
+    onChangeUsername = (e) => {
+        this.setState({
+            username: e.target.value
+        })
     }
 
 
@@ -106,6 +116,14 @@ export default class Register extends Component {
                     </Form.Label>
                     <Col sm={25}>
                         <Form.Control type="text" placeholder="Last name" onChange={this.onChangeLastName} value={this.state.lastName}/>
+                    </Col>
+                </Form.Group>
+                <Form.Group as={Row} controlId="formGroupUsername">
+                    <Form.Label column>
+                        Username:
+                    </Form.Label>
+                    <Col sm={25}>
+                        <Form.Control type="text" placeholder="Username" onChange={this.onChangeUsername} value={this.state.username}/>
                     </Col>
                 </Form.Group>
                 <Form.Group as={Row} controlId="formGroupEmail">
