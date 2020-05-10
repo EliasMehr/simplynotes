@@ -2,6 +2,7 @@
   "name": "version-55",
   "version": "0.1.0",
   "private": true,
+  "proxy": "http://localhost:8080",
   "dependencies": {
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.5.0",
@@ -22,12 +23,6 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
-  "proxy": {
-    "/": {
-      "target": "http://localhost:8080",
-      "ws": true
-    }
-  },
   "eslintConfig": {
     "extends": "react-app"
   },
@@ -44,6 +39,7 @@
     ]
   },
   "devDependencies": {
+    "config": "^3.3.1",
     "prop-types": "^15.7.2",
     "react-bootstrap-icons": "^1.0.1-alpha3"
   }

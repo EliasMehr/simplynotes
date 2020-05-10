@@ -21,3 +21,12 @@ spring:
 
 regexp:
   name: ([a-zA-ZAÖÅöäå]{2,})|([a-zA-ZöäåÅÖÄ-]){2,}([ ]?)([a-zA-ZöäåÅÖÄ]){2,}
+
+simplynotes.app.jwtSecret: bezKoderSecretKey
+simplynotes.app.jwtExpirationMs: 86400000
+
+jwt:
+  secret: mySecret
+  expiration: 604800
+
+

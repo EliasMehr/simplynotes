@@ -25,28 +25,34 @@ public class User {
     private UUID id;
 
     @NotBlank
-    @Size(min = 2, max = 20)
+    @Size(min = 2, max = 25)
     @Pattern(regexp = "([a-zA-ZAÖÅöäå]{2,})|([a-zA-ZöäåÅÖÄ-]){2,}([ ]?)([a-zA-ZöäåÅÖÄ]){2,}", message = "Invalid name format")
     private String firstName;
 
     @NotBlank
-    @Size(min = 2, max = 20)
+    @Size(min = 2, max = 50)
+    private String username;
+
+    @NotBlank
+    @Size(min = 2, max = 50)
     @Pattern(regexp = "([a-zA-ZAÖÅöäå]{2,})|([a-zA-ZöäåÅÖÄ-]){2,}([ ]?)([a-zA-ZöäåÅÖÄ]){2,}", message = "Invalid name format")
     private String lastName;
 
     @NotBlank
-    @Size(min = 2, max = 20)
+    @Size(min = 2, max = 25)
     @Column(unique = true)
     @Pattern(regexp = "^[_A-Za-z0-9-]+(.[_A-Za-z0-9-]+)@[A-Za-z0-9]+(.[A-Za-z0-9]+)(.[A-Za-z]{2,})$", message = "Invalid email format")
     private String email;
 
     @NotBlank
-    @Size(min = 50, max = 100)
+    @Size(min = 5, max = 100)
     private String password;
 
-    @ManyToOne(fetch = EAGER, cascade = ALL)
-    @JoinColumn(name = "role_id")
-    private Role role = defaultRole();
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(	name = "user_roles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id"))
+    private Set<Role> roles = new HashSet<>();
 
     @JsonManagedReference
     @OneToMany(fetch = EAGER,
@@ -69,13 +75,14 @@ public class User {
     @OneToMany(fetch = EAGER,mappedBy = "owner", cascade = ALL, orphanRemoval = true)
     private Set<Friendship> friendships = new HashSet<>();
 
-    public Role defaultRole() {
-        Role role = new Role();
-        role.setId(UUID.randomUUID());
-        role.setType(Type.USER);
-
-        return role;
+    public User(String username, String firstName, String lastName, String email, String encode) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.password = encode;
+        this.username = username;
     }
+
 
     public void addFriend(User friend) {
         friendships.add(new Friendship(this, friend));
