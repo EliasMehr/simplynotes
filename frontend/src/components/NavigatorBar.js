@@ -31,40 +31,41 @@ export default class NavigationBar extends Component{
     componentDidUpdate(prevProps, prevState, snapshot) {
         if(prevState.isLoginSuccess !== this.state.isLoginSuccess) {
             console.log(this.state.isLoginSuccess);
-            console.log("im in update");
 
-            this.isLoggedIn = this.state.isLoginSuccess;
         }
+    }
+
+    logOut() {
+        AccountService.logout();
     }
 
     render() {
 
 
-        return (
-            <Navbar expand="lg" variant="dark" bg="dark">
-                <Navbar.Brand href="/">Spring Notes</Navbar.Brand>
-                <Navbar.Toggle aria-controls="basic-navbar-nav" />
-                <Navbar.Collapse id="basic-navbar-nav">
-                    <Nav className="mr-auto">
-                        <Nav.Item>
-                            <Nav.Link as={Link} to="/">
-                                Home
-                            </Nav.Link>
-                        </Nav.Item>
-                        <Nav.Item>
-                            <Nav.Link as={Link} to="/notes">
-                                Notes
-                            </Nav.Link>
-                        </Nav.Item>
-                    </Nav>
-                </Navbar.Collapse>
-                <Form inline>
-
-                    {this.state.isLoginSuccess}
+        if(this.state.isLoginSuccess) {
+            return (
+                <Navbar expand="lg" variant="dark" bg="dark">
+                    <Navbar.Brand href="/">Spring Notes</Navbar.Brand>
+                    <Navbar.Toggle aria-controls="basic-navbar-nav"/>
+                    <Navbar.Collapse id="basic-navbar-nav">
+                        <Nav className="mr-auto">
+                            <Nav.Item>
+                                <Nav.Link as={Link} to="/">
+                                    Home
+                                </Nav.Link>
+                            </Nav.Item>
+                            <Nav.Item>
+                                <Nav.Link as={Link} to="/notes">
+                                    Notes
+                                </Nav.Link>
+                            </Nav.Item>
+                        </Nav>
+                    </Navbar.Collapse>
+                    <Form inline>
                         <div className="navbar-nav ml-auto">
                             <li className="nav-item">
-                                <Link to={"/profile"} className="nav-link">
-                                    asd
+                                <Link to={"#"} className="nav-link">
+                                    {this.state.user.username}
                                 </Link>
                             </li>
                             <li className="nav-item">
@@ -74,6 +75,30 @@ export default class NavigationBar extends Component{
                             </li>
                         </div>
 
+                    </Form>
+                </Navbar>
+            );
+        }
+        else {
+            return (
+                <Navbar expand="lg" variant="dark" bg="dark">
+                    <Navbar.Brand href="/">Spring Notes</Navbar.Brand>
+                    <Navbar.Toggle aria-controls="basic-navbar-nav"/>
+                    <Navbar.Collapse id="basic-navbar-nav">
+                        <Nav className="mr-auto">
+                            <Nav.Item>
+                                <Nav.Link as={Link} to="/">
+                                    Home
+                                </Nav.Link>
+                            </Nav.Item>
+                            <Nav.Item>
+                                <Nav.Link as={Link} to="/notes">
+                                    Notes
+                                </Nav.Link>
+                            </Nav.Item>
+                        </Nav>
+                    </Navbar.Collapse>
+                    <Form inline>
                         <div className="navbar-nav ml-auto">
                             <li className="nav-item">
                                 <Link to={"/login"} className="nav-link">
@@ -89,9 +114,9 @@ export default class NavigationBar extends Component{
                         </div>
 
 
-
-                </Form>
-            </Navbar>
-        );
+                    </Form>
+                </Navbar>
+            );
+        }
     }
 }
