@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { Form, Button, Row, Col } from 'react-bootstrap';
 import axios from 'axios';
 import "../assets/login.css";
+import AccountService from "../services/AccountService";
 
 const API_URL = "http://localhost:8080/";
 
@@ -40,20 +41,10 @@ class Login extends Component {
     handleSubmit(e) {
         e.preventDefault();
 
-        axios.post(API_URL + "api/auth/signin", {
-            username: this.state.username,
-            password: this.state.password
-        })
-            .then(res => {
-                if(res.data.accessToken) {
-                    localStorage.setItem("user", JSON.stringify(res.data));
-                    this.props.history.push("/notes");
-                    window.location.reload();
-                }
-
-            })
-            .catch(err => {
-                console.log(err.response)
+        AccountService.login(this.state.username, this.state.password)
+            .then(() => {
+                this.props.history.push("/notes")
+                window.location.reload();
             })
     }
 

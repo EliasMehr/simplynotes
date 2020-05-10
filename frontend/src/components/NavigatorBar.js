@@ -2,31 +2,43 @@ import React, {Component} from 'react';
 import { Link } from 'react-router-dom';
 import {Navbar,  NavLink, Nav, Form, Button} from 'react-bootstrap';
 import '../assets/navbar.css';
+import AccountService from "../services/AccountService";
 
 
 export default class NavigationBar extends Component{
+
     constructor(props) {
         super(props);
 
+        this.isLoggedIn = false;
         this.state = {
-            currentUser: undefined
-        };
+            user: AccountService.getCurrentUser(),
+            isLoginSuccess : false
+        }
+
     }
 
-
     componentDidMount() {
-        const user = JSON.parse(localStorage.getItem('user'));
 
-        if(user) {
+        if(this.state.user) {
             this.setState({
-                currentUser: JSON.parse(localStorage.getItem('user'))
+                isLoginSuccess: true
             })
         }
 
+    }
 
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        if(prevState.isLoginSuccess !== this.state.isLoginSuccess) {
+            console.log(this.state.isLoginSuccess);
+            console.log("im in update");
+
+            this.isLoggedIn = this.state.isLoginSuccess;
+        }
     }
 
     render() {
+
 
         return (
             <Navbar expand="lg" variant="dark" bg="dark">
@@ -35,25 +47,24 @@ export default class NavigationBar extends Component{
                 <Navbar.Collapse id="basic-navbar-nav">
                     <Nav className="mr-auto">
                         <Nav.Item>
-                            <Nav.Link>
-                                <Link to="/">Home</Link>
+                            <Nav.Link as={Link} to="/">
+                                Home
                             </Nav.Link>
                         </Nav.Item>
                         <Nav.Item>
-                            <Nav.Link>
-                                <Link to="/notes">Notes</Link>
+                            <Nav.Link as={Link} to="/notes">
+                                Notes
                             </Nav.Link>
                         </Nav.Item>
                     </Nav>
                 </Navbar.Collapse>
                 <Form inline>
 
-
-                    {this.currentUser ? (
+                    {this.state.isLoginSuccess}
                         <div className="navbar-nav ml-auto">
                             <li className="nav-item">
                                 <Link to={"/profile"} className="nav-link">
-                                    {this.currentUser.username}
+                                    asd
                                 </Link>
                             </li>
                             <li className="nav-item">
@@ -62,7 +73,7 @@ export default class NavigationBar extends Component{
                                 </a>
                             </li>
                         </div>
-                    ) : (
+
                         <div className="navbar-nav ml-auto">
                             <li className="nav-item">
                                 <Link to={"/login"} className="nav-link">
@@ -76,7 +87,8 @@ export default class NavigationBar extends Component{
                                 </Link>
                             </li>
                         </div>
-                    )}
+
+
 
                 </Form>
             </Navbar>

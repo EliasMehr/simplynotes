@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import {Form, Row, Col, Button} from "react-bootstrap/";
 import axios from 'axios';
 import "../assets/register.css";
+import AccountService from "../services/AccountService";
 
 const API_URL = "http://localhost:8080/";
 
@@ -18,8 +19,8 @@ export default class Register extends Component {
                 email: "",
                 password: "",
 
-                success: '',
-                message: []
+                success: false,
+                message: ""
             };
 
         this.handleSubmit = this.handleSubmit.bind(this);
@@ -36,25 +37,20 @@ export default class Register extends Component {
     handleSubmit(e)
     {
         e.preventDefault();
-
-         axios.post(API_URL + "api/auth/signup", {
-            firstName: this.state.firstName,
-            lastName: this.state.lastName,
-            email: this.state.email,
-            password: this.state.password,
-            username: this.state.username
-        })
+        AccountService.registerUser(
+            this.state.firstName,
+            this.state.lastName,
+            this.state.email,
+            this.state.password,
+            this.state.username
+        )
             .then(res => {
-                console.log(res);
-                console.log(res.data);
-                console.log(res.status + " res")
-            })
-             // .catch(err => {
-             //     this.setState({
-             //         message: err.response.data.errors
-             //     })
-             //     console.log(this.state.message);
-             // })
+                this.setState({
+                    message: res.data.message,
+                    successful: true
+                })
+            });
+
 
 
     }
