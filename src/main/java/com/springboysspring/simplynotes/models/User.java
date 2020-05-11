@@ -1,10 +1,9 @@
 package com.springboysspring.simplynotes.models;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
 import javax.persistence.*;
 import javax.validation.constraints.*;
 import java.util.HashSet;
@@ -61,17 +60,15 @@ public class User {
             cascade = ALL)
     private Set<ToDo> todos = new HashSet<>();
 
-    @JsonIgnoreProperties("attendees")
     @ManyToMany(fetch = EAGER, mappedBy = "attendees")
     private Set<Appointment> appointments = new HashSet<>();
 
     @JsonManagedReference
-    @OneToMany(fetch = EAGER,mappedBy = "owner", cascade = ALL, orphanRemoval = true)
+    @OneToMany(fetch = EAGER, mappedBy = "owner", cascade = ALL, orphanRemoval = true)
     private Set<Friendship> friendships = new HashSet<>();
 
     public Role defaultRole() {
         Role role = new Role();
-        role.setId(UUID.randomUUID());
         role.setType(Type.USER);
 
         return role;

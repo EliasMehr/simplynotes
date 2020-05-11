@@ -1,7 +1,9 @@
 package com.springboysspring.simplynotes.security;
 
+import com.springboysspring.simplynotes.security.Jwt.JwtConfiguration;
+import com.springboysspring.simplynotes.security.Jwt.JwtTokenVerifier;
+import com.springboysspring.simplynotes.security.Jwt.JwtUsernameAndPasswordAuthenticationFilter;
 import com.springboysspring.simplynotes.security.auth.MyUserDetailService;
-import com.springboysspring.simplynotes.security.auth.RestAuthEntryPoint;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,7 +14,9 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-import java.util.concurrent.TimeUnit;
+import javax.crypto.SecretKey;
+
+import static org.springframework.security.config.http.SessionCreationPolicy.*;
 
 @Configuration
 @EnableWebSecurity
@@ -20,41 +24,30 @@ import java.util.concurrent.TimeUnit;
 public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     private final MyUserDetailService myUserDetailService;
-    private final RestAuthEntryPoint restAuthEntryPoint;
+    private final SecretKey secretKey;
+    private final JwtConfiguration jwtConfiguration;
 
     @Autowired
-    public WebSecurityConfiguration(MyUserDetailService myUserDetailService, RestAuthEntryPoint restAuthEntryPoint) {
+    public WebSecurityConfiguration(MyUserDetailService myUserDetailService, SecretKey secretKey, JwtConfiguration jwtConfiguration) {
         this.myUserDetailService = myUserDetailService;
-        this.restAuthEntryPoint = restAuthEntryPoint;
+        this.secretKey = secretKey;
+        this.jwtConfiguration = jwtConfiguration;
     }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
-                //        .csrf().csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                .csrf().disable()
+                .sessionManagement()
+                .sessionCreationPolicy(STATELESS)
+                .and()
+                .addFilter(new JwtUsernameAndPasswordAuthenticationFilter(authenticationManager(), jwtConfiguration, secretKey))
+                .addFilterAfter(new JwtTokenVerifier(secretKey, jwtConfiguration), JwtUsernameAndPasswordAuthenticationFilter.class)
                 .authorizeRequests()
-                .antMatchers("/", "index", "/css/*", "/js/* ")
+                .antMatchers("/", "index", "/register" ,"/css/*", "/js/* ")
                 .permitAll()
                 .anyRequest()
-                .authenticated()
-                .and()
-                .exceptionHandling()
-                .authenticationEntryPoint(restAuthEntryPoint)
-                .and()
-                    .formLogin()
-                    .loginProcessingUrl("/login")
-                .and()
-                .rememberMe().tokenValiditySeconds((int) TimeUnit.DAYS.toSeconds(21))
-//                    .rememberMe().tokenValiditySeconds((int)TimeUnit.DAYS.toSeconds(21))
-                .key("savedSession")
-                .and()
-                    .logout()
-                    .logoutUrl("/logout")
-                    .clearAuthentication(true)
-                    .invalidateHttpSession(true)
-                    .deleteCookies("JSESSIONID", "remember-me")
-                    .logoutSuccessUrl("/");
-
+                .authenticated();
     }
 
     @Override

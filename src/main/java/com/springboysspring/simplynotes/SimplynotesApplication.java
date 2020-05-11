@@ -1,6 +1,5 @@
 package com.springboysspring.simplynotes;
 
-import com.springboysspring.simplynotes.models.Friendship;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 

@@ -5,7 +5,11 @@ app:
     password: ${DB_PASS}
     pool-size: 30
 
+server:
+  port: 9090
+
 spring:
+
 
   jpa:
     hibernate:
@@ -19,3 +23,10 @@ spring:
 
 regexp:
   name: ([a-zA-ZAÖÅöäå]{2,})|([a-zA-ZöäåÅÖÄ-]){2,}([ ]?)([a-zA-ZöäåÅÖÄ]){2,}
+
+application:
+  jwt:
+    secretKey: ${secretKey}
+    tokenExpirationAfterDays: 14
+    tokenPrefix: ${tokenPrefix}
+

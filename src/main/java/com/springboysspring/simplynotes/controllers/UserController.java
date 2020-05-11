@@ -5,11 +5,11 @@ import com.springboysspring.simplynotes.security.auth.MyUserDetails;
 import com.springboysspring.simplynotes.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/")
@@ -25,11 +25,21 @@ public class UserController {
         this.userService = userService;
     }
 
-  //  @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasRole('USER')")
     @GetMapping("/api/v1")
-    public User get() {
-        currentUser = (MyUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return currentUser.getCurrentUser();
+    public List<User> get() {
+        return userService.get();
+    }
+
+    @PostMapping("/login")
+    public void login(@RequestBody Optional<User> user) {
+        userService.login(user);
+    }
+
+    @PostMapping("/register")
+    public void register(@RequestBody User user) {
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        userService.register(user);
     }
 
 
