@@ -33,8 +33,8 @@ public class JwtUsernameAndPasswordAuthenticationFilter extends UsernamePassword
     @SneakyThrows
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
-        UsernameAndPasswordAuthenticationRequest authenticationRequest =
-                new ObjectMapper().readValue(request.getInputStream(), UsernameAndPasswordAuthenticationRequest.class);
+        JwtUsernameAndPasswordAuthenticationRequest authenticationRequest =
+                new ObjectMapper().readValue(request.getInputStream(), JwtUsernameAndPasswordAuthenticationRequest.class);
 
         Authentication authenticate = new UsernamePasswordAuthenticationToken(
                 authenticationRequest.getUsername(), // Principal

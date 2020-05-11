@@ -1,7 +1,6 @@
 package com.springboysspring.simplynotes.controllers;
 
 import com.springboysspring.simplynotes.models.User;
-import com.springboysspring.simplynotes.security.auth.MyUserDetails;
 import com.springboysspring.simplynotes.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -17,7 +16,6 @@ public class UserController {
 
 
     private UserService userService;
-    private MyUserDetails currentUser;
     private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     @Autowired
@@ -38,6 +36,7 @@ public class UserController {
 
     @PostMapping("/register")
     public void register(@RequestBody User user) {
+
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userService.register(user);
     }

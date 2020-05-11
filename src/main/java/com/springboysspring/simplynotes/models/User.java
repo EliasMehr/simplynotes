@@ -12,7 +12,6 @@ import java.util.UUID;
 
 import static javax.persistence.CascadeType.ALL;
 import static javax.persistence.FetchType.EAGER;
-import static javax.persistence.FetchType.LAZY;
 
 @Entity(name = "Users")
 @Data

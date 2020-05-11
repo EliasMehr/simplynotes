@@ -5,11 +5,11 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class UsernameAndPasswordAuthenticationRequest {
+public class JwtUsernameAndPasswordAuthenticationRequest {
 
     private String username;
     private String password;
 
-    public UsernameAndPasswordAuthenticationRequest() {
+    public JwtUsernameAndPasswordAuthenticationRequest() {
     }
 }

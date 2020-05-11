@@ -23,21 +23,18 @@ public class UserService {
         user = userRepository.findByEmail(user.get().getEmail());
 
         if (user.isPresent()) {
-            System.out.println("Success");
             return user;
         }
         throw new IllegalStateException("Failure");
     }
 
     public void register(User user) {
-        userRepository.saveAndFlush(user);
+            userRepository.saveAndFlush(user);
     }
+
 
     public List<User> get() {
         return userRepository.findAll();
     }
 
-    public void update(User user) {
-        userRepository.saveAndFlush(user);
-    }
 }
