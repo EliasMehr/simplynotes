@@ -1,6 +1,7 @@
 package com.springboysspring.simplynotes.security;
 
 import com.springboysspring.simplynotes.security.auth.MyUserDetailService;
+import com.springboysspring.simplynotes.security.auth.RestAuthEntryPoint;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,10 +20,12 @@ import java.util.concurrent.TimeUnit;
 public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     private final MyUserDetailService myUserDetailService;
+    private final RestAuthEntryPoint restAuthEntryPoint;
 
     @Autowired
-    public WebSecurityConfiguration(MyUserDetailService myUserDetailService) {
+    public WebSecurityConfiguration(MyUserDetailService myUserDetailService, RestAuthEntryPoint restAuthEntryPoint) {
         this.myUserDetailService = myUserDetailService;
+        this.restAuthEntryPoint = restAuthEntryPoint;
     }
 
     @Override
@@ -35,9 +38,11 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .anyRequest()
                 .authenticated()
                 .and()
-                .formLogin()
-                .defaultSuccessUrl("/api/v1", true)
-
+                .exceptionHandling()
+                .authenticationEntryPoint(restAuthEntryPoint)
+                .and()
+                    .formLogin()
+                    .loginProcessingUrl("/login")
                 .and()
                 .rememberMe().tokenValiditySeconds((int) TimeUnit.DAYS.toSeconds(21))
 //                    .rememberMe().tokenValiditySeconds((int)TimeUnit.DAYS.toSeconds(21))
