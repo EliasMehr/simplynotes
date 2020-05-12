@@ -29,6 +29,7 @@ public class JwtTokenVerifier extends OncePerRequestFilter {
         this.jwtConfiguration = jwtConfiguration;
     }
 
+
     @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
@@ -70,7 +71,6 @@ public class JwtTokenVerifier extends OncePerRequestFilter {
             );
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
-
         } catch (JwtException e) {
             e.printStackTrace();
         }
@@ -78,4 +78,6 @@ public class JwtTokenVerifier extends OncePerRequestFilter {
         // After first filter and second filter we want to send back the expected resource back to client
         filterChain.doFilter(request, response);
     }
+
+
 }

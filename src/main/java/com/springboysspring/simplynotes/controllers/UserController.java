@@ -23,22 +23,11 @@ public class UserController {
         this.userService = userService;
     }
 
-    @PreAuthorize("hasRole('USER')")
-    @GetMapping("/api/v1")
-    public List<User> get() {
-        return userService.get();
-    }
-
-    @PostMapping("/login")
-    public void login(@RequestBody Optional<User> user) {
-        userService.login(user);
-    }
 
     @PostMapping("/register")
     public void register(@RequestBody User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userService.register(user);
     }
-
 
 }

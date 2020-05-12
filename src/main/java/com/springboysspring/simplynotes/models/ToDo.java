@@ -32,7 +32,6 @@ public class ToDo {
     @Size(max = 5000)
     private String content;
 
-
     private LocalDateTime deadline;
 
     @JsonBackReference

@@ -1,8 +1,12 @@
 package com.springboysspring.simplynotes.security.Jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.springboysspring.simplynotes.models.User;
+import com.springboysspring.simplynotes.repositories.UserRepository;
 import io.jsonwebtoken.Jwts;
+import java.util.Optional;
 import lombok.SneakyThrows;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -23,19 +27,27 @@ public class JwtUsernameAndPasswordAuthenticationFilter extends UsernamePassword
     private final AuthenticationManager authenticationManager;
     private final JwtConfiguration jwtConfiguration;
     private final SecretKey jwtSecretKey;
-
-    public JwtUsernameAndPasswordAuthenticationFilter(AuthenticationManager authenticationManager, JwtConfiguration jwtConfiguration, SecretKey jwtSecretKey) {
+    private final UserRepository userRepository;
+    @Autowired
+    public JwtUsernameAndPasswordAuthenticationFilter(AuthenticationManager authenticationManager,
+        JwtConfiguration jwtConfiguration,
+        SecretKey jwtSecretKey,
+        UserRepository userRepository) {
         this.authenticationManager = authenticationManager;
+
         this.jwtConfiguration = jwtConfiguration;
         this.jwtSecretKey = jwtSecretKey;
+        this.userRepository = userRepository;
     }
 
     @SneakyThrows
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
         JwtUsernameAndPasswordAuthenticationRequest authenticationRequest =
-                new ObjectMapper().readValue(request.getInputStream(), JwtUsernameAndPasswordAuthenticationRequest.class);
-
+                new ObjectMapper().
+                    readValue(
+                        request.getInputStream(),
+                        JwtUsernameAndPasswordAuthenticationRequest.class);
         Authentication authenticate = new UsernamePasswordAuthenticationToken(
                 authenticationRequest.getUsername(), // Principal
                 authenticationRequest.getPassword()  // Credentials
@@ -51,7 +63,6 @@ public class JwtUsernameAndPasswordAuthenticationFilter extends UsernamePassword
                                             FilterChain chain,
                                             Authentication authResult) throws IOException, ServletException {
 
-
         String token = Jwts.builder()
                 .setSubject(authResult.getName())
                 .claim("authorities", authResult.getAuthorities())
@@ -60,7 +71,8 @@ public class JwtUsernameAndPasswordAuthenticationFilter extends UsernamePassword
                 .signWith(jwtSecretKey)
                 .compact();
 
-
         response.addHeader(jwtConfiguration.getAuthorizationHeader(), jwtConfiguration.getTokenPrefix() + token);
     }
+
+
 }

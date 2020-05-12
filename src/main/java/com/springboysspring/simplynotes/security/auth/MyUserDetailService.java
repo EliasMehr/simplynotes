@@ -16,7 +16,6 @@ public class MyUserDetailService implements UserDetailsService {
 
     private final UserRepository userRepository;
 
-
     @Autowired
     public MyUserDetailService(UserRepository userRepository) {
         this.userRepository = userRepository;
@@ -32,6 +31,6 @@ public class MyUserDetailService implements UserDetailsService {
             return user.map(MyUserDetails::new).get();
         }
 
-        throw new UsernameNotFoundException(String.format("%s was not found ", username));
+        throw    new UsernameNotFoundException(String.format("%s was not found ", username));
     }
 }
