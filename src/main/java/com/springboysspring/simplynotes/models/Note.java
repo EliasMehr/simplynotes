@@ -2,8 +2,12 @@ package com.springboysspring.simplynotes.models;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 
+import javax.annotation.Generated;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -12,7 +16,8 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 public class Note {
 
@@ -27,8 +32,8 @@ public class Note {
     @Size(max = 5000)
     private String content;
 
-    @NotNull
-    private LocalDateTime timestamp = LocalDateTime.now();
+    @CreationTimestamp
+    private LocalDateTime timestamp;
 
     @JsonBackReference
     @ManyToOne(fetch = FetchType.LAZY)

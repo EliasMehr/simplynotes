@@ -36,7 +36,6 @@ public class UserController {
 
     @PostMapping("/register")
     public void register(@RequestBody User user) {
-
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userService.register(user);
     }

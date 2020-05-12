@@ -2,7 +2,9 @@ package com.springboysspring.simplynotes.models;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;
@@ -14,7 +16,8 @@ import static javax.persistence.CascadeType.ALL;
 import static javax.persistence.FetchType.EAGER;
 
 @Entity(name = "Users")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 public class User {
 
