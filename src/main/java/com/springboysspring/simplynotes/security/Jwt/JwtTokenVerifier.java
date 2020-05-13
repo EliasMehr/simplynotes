@@ -2,6 +2,7 @@ package com.springboysspring.simplynotes.security.Jwt;
 
 import com.google.common.base.Strings;
 import io.jsonwebtoken.*;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -42,34 +43,25 @@ public class JwtTokenVerifier extends OncePerRequestFilter {
         }
 
         try {
-            String token = authorizationHeader.replace(jwtConfiguration.getTokenPrefix(), "");
+            String token = removeBearerFromToken(authorizationHeader);
 
-            Jws<Claims> claimsJws = Jwts
-                    .parserBuilder()
-                    .setSigningKey(secretKey)
-                    .build()
-                    .parseClaimsJws(token);
-
+            Jws<Claims> claimsJws = decode(token);
 
             Claims jwsBody = claimsJws.getBody();
 
             String subject = jwsBody.getSubject(); // The Actual username that we pass to subject variable
 
-            // förstår inte
             List<Map<String, String>> authorities = (List<Map<String, String>>) jwsBody.get("authorities");
 
-            Set<SimpleGrantedAuthority> simpleGrantedAuthorities = authorities.stream()
-                    .map(auth -> new SimpleGrantedAuthority(auth.get("authority")))
-                    .collect(Collectors.toSet());
-
+            Set<SimpleGrantedAuthority> simpleGrantedAuthorities = getAuthority(authorities);
 
             Authentication authentication = new UsernamePasswordAuthenticationToken(
                     subject,
                     null,
                     simpleGrantedAuthorities
             );
-            SecurityContextHolder.getContext().setAuthentication(authentication);
 
+            SecurityContextHolder.getContext().setAuthentication(authentication);
 
         } catch (JwtException e) {
             e.printStackTrace();
@@ -78,4 +70,25 @@ public class JwtTokenVerifier extends OncePerRequestFilter {
         // After first filter and second filter we want to send back the expected resource back to client
         filterChain.doFilter(request, response);
     }
+
+    @NotNull
+    private String removeBearerFromToken(String authorizationHeader) {
+        return authorizationHeader.replace(jwtConfiguration.getTokenPrefix(), "");
+    }
+
+    @NotNull
+    private Set<SimpleGrantedAuthority> getAuthority(List<Map<String, String>> authorities) {
+        return authorities.stream()
+                .map(auth -> new SimpleGrantedAuthority(auth.get("authority")))
+                .collect(Collectors.toSet());
+    }
+
+    private Jws<Claims> decode(String token) {
+        return Jwts
+                .parserBuilder()
+                .setSigningKey(secretKey)
+                .build()
+                .parseClaimsJws(token);
+    }
+
 }

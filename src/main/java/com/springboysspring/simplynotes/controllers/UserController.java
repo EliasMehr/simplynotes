@@ -1,14 +1,17 @@
 package com.springboysspring.simplynotes.controllers;
 
+import com.springboysspring.simplynotes.exceptions.APIRequestException;
 import com.springboysspring.simplynotes.models.User;
 import com.springboysspring.simplynotes.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-import java.util.Optional;
+import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/")
@@ -16,29 +19,22 @@ public class UserController {
 
 
     private UserService userService;
-    private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    private BCryptPasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserController(UserService userService) {
+    public UserController(UserService userService, BCryptPasswordEncoder passwordEncoder) {
         this.userService = userService;
+        this.passwordEncoder = passwordEncoder;
     }
 
-    @PreAuthorize("hasRole('USER')")
-    @GetMapping("/api/v1")
-    public List<User> get() {
-        return userService.get();
+    @PostMapping("/signup")
+    public ResponseEntity<String> register(@Valid @RequestBody User user) {
+        if (user != null) {
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+            userService.register(user);
+            return ResponseEntity.ok("User has been created successfully");
+        }
+        throw new APIRequestException("Failed to register user");
     }
-
-    @PostMapping("/login")
-    public void login(@RequestBody Optional<User> user) {
-        userService.login(user);
-    }
-
-    @PostMapping("/register")
-    public void register(@RequestBody User user) {
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        userService.register(user);
-    }
-
 
 }

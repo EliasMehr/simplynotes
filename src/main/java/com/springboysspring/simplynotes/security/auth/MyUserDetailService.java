@@ -27,8 +27,6 @@ public class MyUserDetailService implements UserDetailsService {
         Optional<User> user = userRepository.findByEmail(username);
 
         if (user.isPresent()) {
-            System.out.println(user.get().toString());
-            System.out.println(user.get().getRole());
             return user.map(MyUserDetails::new).get();
         }
 
