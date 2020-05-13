@@ -36,7 +36,7 @@ public class User {
     private String lastName;
 
     @NotBlank
-    @Size(min = 2, max = 20)
+    @Size(min = 2, max = 50)
     @Column(unique = true)
     @Pattern(regexp = "^[_A-Za-z0-9-]+(.[_A-Za-z0-9-]+)@[A-Za-z0-9]+(.[A-Za-z0-9]+)(.[A-Za-z]{2,})$", message = "Invalid email format")
     private String email;

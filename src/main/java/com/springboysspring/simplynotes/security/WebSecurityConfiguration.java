@@ -42,10 +42,11 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
         http
                 .csrf().disable()
                 .sessionManagement()
-                .sessionCreationPolicy(STATELESS)
+                   .sessionCreationPolicy(STATELESS)
                 .and()
-                .addFilter(new JwtUsernameAndPasswordAuthenticationFilter(authenticationManager(), jwtConfiguration, secretKey,
-                    userRepository))
+                .addFilter(new JwtUsernameAndPasswordAuthenticationFilter(authenticationManager()
+                    , jwtConfiguration, secretKey, userRepository))
+
                 .addFilterAfter(new JwtTokenVerifier(secretKey, jwtConfiguration), JwtUsernameAndPasswordAuthenticationFilter.class)
                 .authorizeRequests()
                 .antMatchers("/", "index", "/register" ,"/css/*", "/js/* ")
@@ -58,8 +59,6 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(myUserDetailService);
     }
-
-
 
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder() {

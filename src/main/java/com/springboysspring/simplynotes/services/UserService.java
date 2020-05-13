@@ -18,20 +18,10 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public Optional<User> login(Optional<User> user) {
-
-        user = userRepository.findByEmail(user.get().getEmail());
-
-        if (user.isPresent()) {
-            return user;
-        }
-        throw new IllegalStateException("Failure");
-    }
 
     public void register(User user) {
             userRepository.saveAndFlush(user);
     }
-
 
     public List<User> get() {
         return userRepository.findAll();
