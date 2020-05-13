@@ -4,6 +4,7 @@ import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.OK;
 
 import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import com.springboysspring.simplynotes.models.User;
@@ -97,8 +98,12 @@ public class JwtUsernameAndPasswordAuthenticationFilter extends UsernamePassword
         data.put(jwtConfiguration.getAuthorizationHeader(), jwtConfiguration.getTokenPrefix() + token);
 
         ObjectMapper mapper = new ObjectMapper();
-        mapper.writeValue(response.getOutputStream(), data);
-        response.getOutputStream().flush();
+        try {
+            mapper.writeValue(response.getOutputStream(), data);
+            response.getOutputStream().flush();
+        } catch (JsonMappingException e) {
+            e.printStackTrace();
+        }
     }
 
 
