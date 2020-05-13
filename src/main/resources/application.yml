@@ -2,13 +2,15 @@ app:
   datasource:
     jdbc-url: ${DB_URL}
     username: ${DB_USER}
-#    password: ${DB_PASS}
+    password: ${DB_PASS}
     pool-size: 30
 
 server:
-  port: 8080
+  port: 9090
 
 spring:
+
+
   jpa:
     hibernate:
       ddl-auto: update
@@ -24,8 +26,7 @@ regexp:
 
 application:
   jwt:
-    secretKey: securesecuresecuresecuresecuresecuresecuresecuresecuresecuresecuresecuresecuresecuresecuresecuresecuresecuresecuresecuresecure
-    tokenExpirationAfterDays: 14
-    tokenPrefix: Bearer
-
+    secretKey: ${secretKey}
+    tokenExpirationAfterDays: 1
+    tokenPrefix: ${tokenPrefix}
 

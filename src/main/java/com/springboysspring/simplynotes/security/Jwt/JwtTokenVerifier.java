@@ -29,7 +29,6 @@ public class JwtTokenVerifier extends OncePerRequestFilter {
         this.jwtConfiguration = jwtConfiguration;
     }
 
-
     @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
@@ -43,14 +42,9 @@ public class JwtTokenVerifier extends OncePerRequestFilter {
         }
 
         try {
-            String token = authorizationHeader.replace(jwtConfiguration.getTokenPrefix(), "");
+            String token = removeBearerFromToken(authorizationHeader);
 
-            Jws<Claims> claimsJws = Jwts
-                    .parserBuilder()
-                    .setSigningKey(secretKey)
-                    .build()
-                    .parseClaimsJws(token);
-
+            Jws<Claims> claimsJws = decode(token);
 
             Claims jwsBody = claimsJws.getBody();
 
@@ -59,10 +53,7 @@ public class JwtTokenVerifier extends OncePerRequestFilter {
             // förstår inte
             List<Map<String, String>> authorities = (List<Map<String, String>>) jwsBody.get("authorities");
 
-            Set<SimpleGrantedAuthority> simpleGrantedAuthorities = authorities.stream()
-                    .map(auth -> new SimpleGrantedAuthority(auth.get("authority")))
-                    .collect(Collectors.toSet());
-
+            Set<SimpleGrantedAuthority> simpleGrantedAuthorities = getAuthority(authorities);
 
             Authentication authentication = new UsernamePasswordAuthenticationToken(
                     subject,
@@ -70,6 +61,7 @@ public class JwtTokenVerifier extends OncePerRequestFilter {
                     simpleGrantedAuthorities
             );
             SecurityContextHolder.getContext().setAuthentication(authentication);
+
 
         } catch (JwtException e) {
             e.printStackTrace();
@@ -79,5 +71,24 @@ public class JwtTokenVerifier extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
+    @NotNull
+    private String removeBearerFromToken(String authorizationHeader) {
+        return authorizationHeader.replace(jwtConfiguration.getTokenPrefix(), "");
+    }
+
+    @NotNull
+    private Set<SimpleGrantedAuthority> getAuthority(List<Map<String, String>> authorities) {
+        return authorities.stream()
+                .map(auth -> new SimpleGrantedAuthority(auth.get("authority")))
+                .collect(Collectors.toSet());
+    }
+
+    private Jws<Claims> decode(String token) {
+        return Jwts
+                .parserBuilder()
+                .setSigningKey(secretKey)
+                .build()
+                .parseClaimsJws(token);
+    }
 
 }

@@ -1,6 +1,5 @@
 package com.springboysspring.simplynotes.security;
 
-import com.springboysspring.simplynotes.repositories.UserRepository;
 import com.springboysspring.simplynotes.security.Jwt.JwtConfiguration;
 import com.springboysspring.simplynotes.security.Jwt.JwtTokenVerifier;
 import com.springboysspring.simplynotes.security.Jwt.JwtUsernameAndPasswordAuthenticationFilter;
@@ -28,13 +27,12 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
     private final SecretKey secretKey;
     private final JwtConfiguration jwtConfiguration;
     private final UserRepository userRepository;
+
     @Autowired
-    public WebSecurityConfiguration(MyUserDetailService myUserDetailService, SecretKey secretKey, JwtConfiguration jwtConfiguration,
-        UserRepository userRepository) {
+    public WebSecurityConfiguration(MyUserDetailService myUserDetailService, SecretKey secretKey, JwtConfiguration jwtConfiguration, UserRepository userRepository) {
         this.myUserDetailService = myUserDetailService;
         this.secretKey = secretKey;
         this.jwtConfiguration = jwtConfiguration;
-        this.userRepository = userRepository;
     }
 
     @Override
@@ -42,14 +40,12 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
         http
                 .csrf().disable()
                 .sessionManagement()
-                   .sessionCreationPolicy(STATELESS)
+                .sessionCreationPolicy(STATELESS)
                 .and()
-                .addFilter(new JwtUsernameAndPasswordAuthenticationFilter(authenticationManager()
-                    , jwtConfiguration, secretKey, userRepository))
-
+                .addFilter(new JwtUsernameAndPasswordAuthenticationFilter(authenticationManager(), jwtConfiguration, secretKey, userRepository))
                 .addFilterAfter(new JwtTokenVerifier(secretKey, jwtConfiguration), JwtUsernameAndPasswordAuthenticationFilter.class)
                 .authorizeRequests()
-                .antMatchers("/", "index", "/register" ,"/css/*", "/js/* ")
+                .antMatchers("/", "index", "/signup" ,"/css/*", "/js/* ")
                 .permitAll()
                 .anyRequest()
                 .authenticated();
@@ -59,6 +55,8 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(myUserDetailService);
     }
+
+
 
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder() {

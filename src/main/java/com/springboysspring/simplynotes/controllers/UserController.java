@@ -16,18 +16,23 @@ public class UserController {
 
 
     private UserService userService;
-    private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    private BCryptPasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserController(UserService userService) {
+    public UserController(UserService userService, BCryptPasswordEncoder passwordEncoder) {
         this.userService = userService;
+        this.passwordEncoder = passwordEncoder;
     }
 
-
-    @PostMapping("/register")
-    public void register(@RequestBody User user) {
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        userService.register(user);
+    @PostMapping("/signup")
+    public ResponseEntity<String> register(@Valid @RequestBody User user) {
+        if (user != null) {
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+            userService.register(user);
+            return ResponseEntity.ok("User has been created successfully");
+        }
+        throw new APIRequestException("Failed to register user");
     }
+
 
 }
