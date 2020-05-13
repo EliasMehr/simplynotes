@@ -16,6 +16,7 @@ import java.util.UUID;
 public class NoteController {
 
     private NoteService noteService;
+
     @Autowired
     public NoteController(NoteService noteService) {
         this.noteService = noteService;
