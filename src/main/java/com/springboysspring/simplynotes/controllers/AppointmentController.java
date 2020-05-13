@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -37,7 +38,9 @@ public class AppointmentController {
     }
 
     // CREATE APPOINTMENTS FOR USER
+
     @PreAuthorize("'USER'")
+    @Transactional
     @PostMapping("/{id}")
     public ResponseEntity<String> create(@PathVariable UUID id, @RequestBody Appointment appointment) {
         try {
@@ -49,6 +52,7 @@ public class AppointmentController {
     }
 
     // DELETE APPOINTMENT FOR USER
+    @Transactional
     @PreAuthorize("hasRole('USER')")
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteById(@PathVariable UUID id) {
@@ -62,6 +66,7 @@ public class AppointmentController {
 
 
     // UPDATE APPOINTMENT FOR USER
+    @Transactional
     @PreAuthorize("hasRole('USER')")
     @PutMapping("/{id}")
     public ResponseEntity<String> update(@PathVariable UUID id, @RequestBody Appointment appointment) {
