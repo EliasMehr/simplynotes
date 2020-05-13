@@ -15,8 +15,8 @@ import java.util.UUID;
 @Service
 public class AppointmentService {
 
-    private final UserRepository userRepository;
-    private final AppointmentRepository appointmentRepository;
+    private UserRepository userRepository;
+    private AppointmentRepository appointmentRepository;
 
     @Autowired
     public AppointmentService(UserRepository userRepository, AppointmentRepository appointmentRepository) {
@@ -29,22 +29,22 @@ public class AppointmentService {
         Optional<User> userById = userRepository.findById(id);
 
         if (userById.isPresent()) {
-            return appointmentRepository.findAllAppointments(userById.get());
+            return appointmentRepository.findAllByAttendees(userById.get());
         }
         throw new Exception("Could not find any appointments");
     }
 
     // CREATE APPOINTMENTS FOR USER
-    public void add(UUID id, Appointment appointment) {
+    public void add(UUID id, Appointment appointment) throws Exception {
         Optional<User> userById = userRepository.findById(id);
 
         if (userById.isPresent()) {
             userById.get().addAppointment(appointment);
         }
         try {
-            appointmentRepository.saveAndFlush(appointment);
+            appointmentRepository.save(appointment);
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new Exception("Could not add appointment");
         }
     }
 
@@ -57,7 +57,6 @@ public class AppointmentService {
         }
     }
 
-
     // UPDATE APPOINTMENT FOR USER
     public void update(UUID id, Appointment appointment) throws Exception {
         Optional<Appointment> existingAppointment = appointmentRepository.findById(id);
@@ -65,12 +64,11 @@ public class AppointmentService {
         if (existingAppointment.isPresent()) {
             existingAppointment.get().setTitle(appointment.getTitle());
             existingAppointment.get().setDescription(appointment.getDescription());
-            existingAppointment.get().setAppointmentTime(appointment.getAppointmentTime());
+//            existingAppointment.get().setAppointmentTime(appointment.getAppointmentTime());
             existingAppointment.get().setAttendees(appointment.getAttendees());
             existingAppointment.get().setEstimatedTime(appointment.getEstimatedTime());
-
             try {
-                appointmentRepository.saveAndFlush(existingAppointment.get());
+                appointmentRepository.save(existingAppointment.get());
             } catch (Exception e) {
                 throw new Exception("Could not update this appointment");
             }

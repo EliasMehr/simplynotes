@@ -39,7 +39,7 @@ public class AppointmentController {
 
     // CREATE APPOINTMENTS FOR USER
 
-    @PreAuthorize("'USER'")
+    @PreAuthorize("hasRole('USER')")
     @Transactional
     @PostMapping("/{id}")
     public ResponseEntity<String> create(@PathVariable UUID id, @RequestBody Appointment appointment) {

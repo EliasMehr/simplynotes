@@ -12,5 +12,5 @@ import java.util.List;
 @Repository
 public interface AppointmentRepository extends JpaRepository<Appointment, UUID> {
 
-    List<Appointment> findAllAppointments(User user);
+    List<Appointment> findAllByAttendees(User user);
 }
