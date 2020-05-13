@@ -3,6 +3,8 @@ package com.springboysspring.simplynotes.models;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonIgnoreType;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -20,17 +22,20 @@ public class Friendship {
         this.friend = friend;
     }
 
+
+    @JsonManagedReference
     @EmbeddedId
-    @JsonIgnore
+    @JsonIgnoreProperties(value = {"ownerId","friendId"})
     private FriendshipId friendshipId = new FriendshipId();
 
     @JsonBackReference
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @MapsId("ownerId")
     private User owner;
 
-    @JsonIgnoreProperties({"friends", "password"})
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+
+    @JsonIgnoreProperties({"friends", "password","friendships"})
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @MapsId("friendId")
     private User friend;
 

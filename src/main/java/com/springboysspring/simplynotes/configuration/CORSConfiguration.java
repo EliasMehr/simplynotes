@@ -1,5 +1,5 @@
 package com.springboysspring.simplynotes.configuration;
-gi
+
 import javax.validation.constraints.NotNull;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

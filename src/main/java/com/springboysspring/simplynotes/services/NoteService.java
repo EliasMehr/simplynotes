@@ -35,7 +35,6 @@ public class NoteService {
         return noteRepository.findAllByOwner(getUser(id));
     }
 
-
     public void addNoteToUserId(UUID id, Note note) throws Exception {
         getUser(id).addNote(note);
         try {

@@ -1,5 +1,6 @@
 package com.springboysspring.simplynotes.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Data;
 import lombok.Getter;
@@ -12,6 +13,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
+import static com.springboysspring.simplynotes.models.Friendship.Status.PENDING;
 import static javax.persistence.CascadeType.ALL;
 import static javax.persistence.FetchType.EAGER;
 
@@ -67,18 +69,23 @@ public class User {
 
     @JsonManagedReference
     @OneToMany(fetch = EAGER, mappedBy = "owner", cascade = ALL, orphanRemoval = true)
+    @JsonIgnoreProperties({"friendshipId"})
     private Set<Friendship> friendships = new HashSet<>();
 
     public Role defaultRole() {
         Role role = new Role();
         role.setType(Type.USER);
-
         return role;
     }
 
     public void addFriend(User friend) {
-        friendships.add(new Friendship(this, friend));
-        friend.friendships.add(new Friendship(friend, this));
+
+        Friendship friendship = new Friendship(this, friend);
+        friendship.setStatus(PENDING);
+        friendships.add(friendship);
+        Friendship friendFriendShip = new Friendship(friend, this);
+        friendFriendShip.setStatus(PENDING);
+        friend.friendships.add(friendFriendShip);
     }
 
     public void addNote(Note note) {

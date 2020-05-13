@@ -1,6 +1,7 @@
 package com.springboysspring.simplynotes.repositories;
 
 import com.springboysspring.simplynotes.models.User;
+import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -14,4 +15,5 @@ public interface UserRepository extends JpaRepository<User, UUID> {
 
     Optional<User> findById(UUID id);
 
+    List<User> findByFirstNameOrLastNameOrEmail(String firstName,String lastName,String email);
 }
