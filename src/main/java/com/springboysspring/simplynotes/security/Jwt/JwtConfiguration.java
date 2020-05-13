@@ -15,6 +15,7 @@ public class JwtConfiguration {
     private String secretKey;
     private String tokenPrefix;
     private Integer tokenExpirationAfterDays;
+    private String getWrongCredentialsMessage;
 
     public JwtConfiguration() {
     }

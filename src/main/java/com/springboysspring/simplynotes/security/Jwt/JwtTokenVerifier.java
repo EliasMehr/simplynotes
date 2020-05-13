@@ -2,6 +2,7 @@ package com.springboysspring.simplynotes.security.Jwt;
 
 import com.google.common.base.Strings;
 import io.jsonwebtoken.*;
+import javax.validation.constraints.NotNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
