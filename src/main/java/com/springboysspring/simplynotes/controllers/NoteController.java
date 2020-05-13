@@ -38,7 +38,7 @@ public class NoteController {
     public ResponseEntity<String> addNoteToUserId(@PathVariable UUID id, @RequestBody Note note) {
         try {
             noteService.addNoteToUserId(id, note);
-            return ResponseEntity.status(HttpStatus.OK).body("Note added to user");
+            return ResponseEntity.ok("Note added to user");
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
@@ -49,7 +49,7 @@ public class NoteController {
     public ResponseEntity<String> updateNoteById(@PathVariable UUID id, @RequestBody Note note) {
         try {
             noteService.updateNoteById(id, note);
-            return ResponseEntity.status(HttpStatus.OK).body("Note updated");
+            return ResponseEntity.ok("Note updated");
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
@@ -60,17 +60,15 @@ public class NoteController {
     public ResponseEntity<String> deleteNoteById(@PathVariable UUID id) {
         try {
             noteService.deleteNoteById(id);
-            return ResponseEntity.status(HttpStatus.OK).body("Note was deleted");
+            return ResponseEntity.ok("Note was deleted");
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
     }
 
     @PreAuthorize("hasRole('USER')")
-    @GetMapping("/notes/{noteId}/user/{userId}")
-    public void sendNoteToFriend(@PathVariable UUID noteId,
-                                 UUID userId,
-                                 @RequestParam String friendName) { // /notes/{noteId}/user/{userId}?friendName=Fazli
+    @GetMapping("/notes/{noteId}/friend/{friendId}")
+    public void sendNoteToFriend(@PathVariable UUID noteId, UUID friendId) {
         // find note by id
         // find user and then his friend == friendName
         // make new Note with copy users note attr
