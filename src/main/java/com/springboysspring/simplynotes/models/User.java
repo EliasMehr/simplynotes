@@ -39,7 +39,7 @@ public class User {
     private String email;
 
     @NotBlank
-    @Size(min = 50, max = 100)
+    @Size(min = 6, max = 100)
     private String password;
 
     @ManyToOne(fetch = EAGER, cascade = ALL)

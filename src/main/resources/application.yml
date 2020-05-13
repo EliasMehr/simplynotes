@@ -27,6 +27,6 @@ regexp:
 application:
   jwt:
     secretKey: ${secretKey}
-    tokenExpirationAfterDays: 14
+    tokenExpirationAfterDays: 1
     tokenPrefix: ${tokenPrefix}
 
