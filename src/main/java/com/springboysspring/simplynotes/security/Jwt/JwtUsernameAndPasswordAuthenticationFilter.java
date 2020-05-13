@@ -9,11 +9,9 @@ import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import com.springboysspring.simplynotes.models.User;
 import com.springboysspring.simplynotes.repositories.UserRepository;
 import io.jsonwebtoken.Jwts;
-import java.io.OutputStream;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 import javax.crypto.SecretKey;
 import javax.security.sasl.AuthenticationException;
@@ -64,7 +62,7 @@ public class JwtUsernameAndPasswordAuthenticationFilter extends UsernamePassword
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response,
         FilterChain chain, Authentication authResult) {
         String token = generateJwtToken(authResult);
-        sendUserObjectInResponse(response, authResult, token);
+        addUserObjectInResponse(response, authResult, token);
 
     }
 
@@ -72,9 +70,7 @@ public class JwtUsernameAndPasswordAuthenticationFilter extends UsernamePassword
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response,
         org.springframework.security.core.AuthenticationException failed) {
-        sendResponseBody(response, jwtConfiguration.getGetWrongCredentialsMessage(), BAD_REQUEST);
-
-
+        response.sendError(BAD_REQUEST.value());
     }
 
     private String generateJwtToken(Authentication authResult) {
@@ -88,19 +84,18 @@ public class JwtUsernameAndPasswordAuthenticationFilter extends UsernamePassword
     }
 
     @SneakyThrows
-    private void sendUserObjectInResponse(HttpServletResponse response, Authentication authResult, String token) {
+    private void addUserObjectInResponse(HttpServletResponse response, Authentication authResult, String token) {
         Optional<User> byEmail = userRepository.findByEmail(authResult.getName());
-        response.addHeader(jwtConfiguration.getAuthorizationHeader(), jwtConfiguration.getTokenPrefix() + token);
-        sendResponseBody(response, byEmail.get(), OK);
-
+        sendResponseBody(response, byEmail.get(), OK, token);
     }
 
-    //Generic method can take any type of object as a responseBody
     @SneakyThrows
-    private <T> void sendResponseBody(HttpServletResponse response, T responseBody, HttpStatus status) {
-        Map<String, Object> data = new HashMap<>();
+    private void sendResponseBody(HttpServletResponse response, User responseBody, HttpStatus status, String token) {
+        var data = new HashMap<>();
         data.put("status", status.value());
-        data.put(status == OK ? "body" : "message", responseBody);
+        data.put("body", responseBody);
+        data.put(jwtConfiguration.getAuthorizationHeader(), jwtConfiguration.getTokenPrefix() + token);
+
         ObjectMapper mapper = new ObjectMapper();
         mapper.writeValue(response.getOutputStream(), data);
         response.getOutputStream().flush();
