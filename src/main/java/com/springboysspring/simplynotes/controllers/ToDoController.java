@@ -9,9 +9,11 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.UUID;
 
+@RequestMapping("/todos")
 @RestController
 public class ToDoController {
     private ToDoService toDoService;
@@ -22,7 +24,7 @@ public class ToDoController {
     }
 
     @PreAuthorize("hasRole('USER')")
-    @GetMapping("/todos/user/{id}")
+    @GetMapping("/user/{id}")
     public ResponseEntity<List<ToDo>> getTodosByUserID(@PathVariable UUID id) {
         List<ToDo> response;
         try {
@@ -33,8 +35,9 @@ public class ToDoController {
         return ResponseEntity.ok(response);
     }
 
+    @Transactional
     @PreAuthorize("hasRole('USER')")
-    @PostMapping("/todos/user/{id}")
+    @PostMapping("/user/{id}")
     public ResponseEntity<String> addTodoToUserId(@PathVariable UUID id, @RequestBody ToDo toDo) {
         try {
             toDoService.addTodoToUserId(id, toDo);
@@ -44,8 +47,9 @@ public class ToDoController {
         }
     }
 
+    @Transactional
     @PreAuthorize("hasRole('USER')")
-    @PutMapping("/todos/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<String> updateTodoById(@PathVariable UUID id, @RequestBody ToDo toDo) {
         try {
             toDoService.updateTodoById(id, toDo);
@@ -55,8 +59,9 @@ public class ToDoController {
         }
     }
 
+    @Transactional
     @PreAuthorize("hasRole('USER')")
-    @DeleteMapping("/todos/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteTodoById(@PathVariable UUID id) {
         try {
             toDoService.deleteTodoById(id);
