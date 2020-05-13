@@ -3,6 +3,7 @@ package com.springboysspring.simplynotes.security.Jwt;
 import com.google.common.base.Strings;
 import io.jsonwebtoken.*;
 import javax.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -20,15 +21,11 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+@AllArgsConstructor
 public class JwtTokenVerifier extends OncePerRequestFilter {
 
     private final SecretKey secretKey;
     private final JwtConfiguration jwtConfiguration;
-
-    public JwtTokenVerifier(SecretKey secretKey, JwtConfiguration jwtConfiguration) {
-        this.secretKey = secretKey;
-        this.jwtConfiguration = jwtConfiguration;
-    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,

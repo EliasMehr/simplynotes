@@ -19,6 +19,7 @@ import javax.security.sasl.AuthenticationException;
 import javax.servlet.FilterChain;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
@@ -27,21 +28,14 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+
+@AllArgsConstructor
 public class JwtUsernameAndPasswordAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
     private final AuthenticationManager authenticationManager;
     private final JwtConfiguration jwtConfiguration;
     private final SecretKey jwtSecretKey;
     private final UserRepository userRepository;
-
-
-    public JwtUsernameAndPasswordAuthenticationFilter(AuthenticationManager authenticationManager,
-        JwtConfiguration jwtConfiguration, SecretKey jwtSecretKey, UserRepository userRepository) {
-        this.authenticationManager = authenticationManager;
-        this.jwtConfiguration = jwtConfiguration;
-        this.jwtSecretKey = jwtSecretKey;
-        this.userRepository = userRepository;
-    }
 
 
     @SneakyThrows
