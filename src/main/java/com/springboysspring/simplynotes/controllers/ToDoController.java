@@ -1,30 +1,73 @@
 package com.springboysspring.simplynotes.controllers;
 
 import com.springboysspring.simplynotes.models.ToDo;
-import com.springboysspring.simplynotes.services.TodoService;
+import com.springboysspring.simplynotes.services.ToDoService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.UUID;
 
+@RequestMapping("/todos")
 @RestController
-@RequestMapping("/api/todo")
 public class ToDoController {
-
-    private TodoService todoService;
+    private ToDoService toDoService;
 
     @Autowired
-    public ToDoController(TodoService todoService) {
-        this.todoService = todoService;
+    public ToDoController(ToDoService toDoService) {
+        this.toDoService = toDoService;
     }
 
-    @GetMapping
-    public List<ToDo> getAll(UUID id) {
-        return todoService.getTodo(id);
+    @PreAuthorize("hasRole('USER')")
+    @GetMapping("/user/{id}")
+    public ResponseEntity<List<ToDo>> getTodosByUserID(@PathVariable UUID id) {
+        List<ToDo> response;
+        try {
+            response = toDoService.getTodosByUserID(id);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
+        return ResponseEntity.ok(response);
     }
 
+    @Transactional
+    @PreAuthorize("hasRole('USER')")
+    @PostMapping("/user/{id}")
+    public ResponseEntity<String> addTodoToUserId(@PathVariable UUID id, @RequestBody ToDo toDo) {
+        try {
+            toDoService.addTodoToUserId(id, toDo);
+            return ResponseEntity.ok("Todo added to user");
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
+    }
 
+    @Transactional
+    @PreAuthorize("hasRole('USER')")
+    @PutMapping("/{id}")
+    public ResponseEntity<String> updateTodoById(@PathVariable UUID id, @RequestBody ToDo toDo) {
+        try {
+            toDoService.updateTodoById(id, toDo);
+            return ResponseEntity.ok("Todo updated");
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
+    }
+
+    @Transactional
+    @PreAuthorize("hasRole('USER')")
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteTodoById(@PathVariable UUID id) {
+        try {
+            toDoService.deleteTodoById(id);
+            return ResponseEntity.ok("Todo was deleted");
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
+    }
 }
