@@ -23,11 +23,11 @@ public class UserService {
     }
 
     public void register(User user) {
-        try {
             Optional<User> isEmailTaken = userRepository.findByEmail(user.getEmail());
             if (isEmailTaken.isPresent()) {
                 throw new APIRequestException(String.format("Email %s is already taken!", user.getEmail()));
             }
+        try {
             user.setPassword(passwordEncoder.encode(user.getPassword()));
             userRepository.saveAndFlush(user);
         } catch (Exception e) {

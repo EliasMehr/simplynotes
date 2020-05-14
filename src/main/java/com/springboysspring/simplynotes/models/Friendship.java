@@ -23,7 +23,7 @@ public class Friendship {
     }
 
 
-    @JsonManagedReference
+//    @JsonManagedReference
     @EmbeddedId
     @JsonIgnoreProperties(value = {"ownerId","friendId"})
     private FriendshipId friendshipId = new FriendshipId();

@@ -1,5 +1,6 @@
 package com.springboysspring.simplynotes.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Data;
@@ -67,7 +68,8 @@ public class User {
     @ManyToMany(fetch = EAGER, mappedBy = "attendees")
     private Set<Appointment> appointments = new HashSet<>();
 
-    @JsonManagedReference
+//    @JsonManagedReference
+
     @OneToMany(fetch = EAGER, mappedBy = "owner", cascade = ALL, orphanRemoval = true)
     @JsonIgnoreProperties({"friendshipId"})
     private Set<Friendship> friendships = new HashSet<>();
