@@ -74,19 +74,24 @@ public class NoteController {
     @Transactional
     @PreAuthorize("hasRole('USER')")
     @GetMapping("/{noteId}/friend/{friendId}")
-    public void sendNoteToFriend(@PathVariable UUID noteId, UUID friendId) {
-        // find note by id
-        // find user and then his friend == friendName
-        // make new Note with copy users note attr
+    public ResponseEntity<String> sendNoteToFriend(@PathVariable UUID noteId, @PathVariable UUID friendId) {
+        try {
+            noteService.sendNoteToFriend(noteId, friendId);
+            return ResponseEntity.ok("Note was sent to friend");
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
     }
 
     @Transactional
     @PreAuthorize("hasRole('USER')")
     @GetMapping("/{id}/convert")
-    public void convertNoteAsTodo(@PathVariable UUID id) {
-        // find note by id
-        // copy note, create to.do
-        // delete note
-        // add to.do to db
+    public ResponseEntity<String> convertNoteAsTodo(@PathVariable UUID id) {
+        try {
+            noteService.convertNoteAsTodo(id);
+            return ResponseEntity.ok("Note was converted to a Todo");
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
     }
 }
