@@ -29,13 +29,13 @@ public class Friendship {
     private FriendshipId friendshipId = new FriendshipId();
 
     @JsonBackReference
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER,cascade = CascadeType.REFRESH)
     @MapsId("ownerId")
     private User owner;
 
 
     @JsonIgnoreProperties({"friends", "password","friendships"})
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
     @MapsId("friendId")
     private User friend;
 

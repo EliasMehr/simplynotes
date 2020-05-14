@@ -2,6 +2,7 @@ package com.springboysspring.simplynotes.services;
 
 import com.springboysspring.simplynotes.exceptions.APIRequestException;
 import com.springboysspring.simplynotes.models.User;
+import com.springboysspring.simplynotes.repositories.FriendshipReposity;
 import com.springboysspring.simplynotes.repositories.UserRepository;
 import com.springboysspring.simplynotes.services.handlers.UserHandler;
 import java.util.List;
@@ -17,13 +18,15 @@ public class UserService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder;
     private final AuthenticatedUserEmail authenticatedUserEmail;
+    private final FriendshipReposity friendshipReposity;
 
     @Autowired
     public UserService(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder,
-        AuthenticatedUserEmail authenticatedUserEmail) {
+        AuthenticatedUserEmail authenticatedUserEmail, FriendshipReposity friendshipReposity) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.authenticatedUserEmail = authenticatedUserEmail;
+        this.friendshipReposity = friendshipReposity;
     }
 
     public void register(User user) {
@@ -31,21 +34,17 @@ public class UserService {
         if (isEmailTaken.isPresent()) {
             throw new APIRequestException(String.format("Email %s is already taken!", user.getEmail()));
         }
-        try {
-            user.setPassword(passwordEncoder.encode(user.getPassword()));
-            userRepository.saveAndFlush(user);
-        } catch (Exception e) {
-            throw new APIRequestException("Error establishing a database connection!");
-        }
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        userRepository.saveAndFlush(user);
+
     }
 
-    //TODO ignore case s...
     public List<User> searchUsers(String firstName, String lastName, String email) {
-        try {
-            return userRepository.findByFirstNameOrLastNameOrEmailIgnoreCase(firstName, lastName, email);
-        } catch (Exception e) {
-            throw new APIRequestException("Error establishing a database connection!");
-        }
+        return userRepository.
+            findByFirstNameIgnoreCaseOrLastNameIgnoreCaseOrEmailIgnoreCase(
+                firstName,
+                lastName,
+                email);
     }
 
     public void addFriend(UUID userId, UUID friendId) {
@@ -58,6 +57,15 @@ public class UserService {
                 userRepository);
     }
 
+    public void deleteFriend(UUID userId, UUID friendId) {
+        new UserHandler()
+            .invoke(
+                userId,
+                friendId,
+                authenticatedUserEmail.getAuthenticatedUserEmail(),
+                User::deleteFriend,
+                userRepository);
+    }
 
 
 

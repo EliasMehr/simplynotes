@@ -22,7 +22,7 @@ public class UserHandler {
                 throw new APIRequestException("You dont have the permission to add or delete friends for other users!");
             }
             if (userId.equals(friendId)) {
-                throw new APIRequestException("You cannot add yourself as a friend!");
+                throw new APIRequestException("You cannot add or delete yourself as a friend!");
             }
 
             Optional<User> friend = userRepository.findById(friendId);
@@ -32,11 +32,7 @@ public class UserHandler {
             } else {
                 throw new APIRequestException(String.format("Friend with the id: %s does not exists!", friendId));
             }
-            try {
-                userRepository.save(currentUser);
-            } catch (Exception e) {
-                throw new APIRequestException("Error establishing the database connection!");
-            }
+            userRepository.save(currentUser);
         } else {
             throw new APIRequestException(String.format("User with the id: %s does not exists!", userId));
         }

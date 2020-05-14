@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 @RestController
-@RequestMapping("/")
+@RequestMapping("/user")
 public class UserController {
 
     private final UserService userService;
@@ -42,7 +42,7 @@ public class UserController {
         }
     }
 
-    @GetMapping("/user")
+    @GetMapping()
     public ResponseEntity<?> searchUsers(@RequestParam(required = false) String firstName, String lastName, String email) {
         try {
             var users = userService.searchUsers(firstName, lastName, email);
@@ -52,11 +52,21 @@ public class UserController {
         }
     }
 
-    @PostMapping("/user/{userId}/{friendId}")  // OR WE CAN TAKE A WHOLE FRIEND AS A PARAMETER?
+    @PostMapping("add/{userId}/{friendId}")  
     public ResponseEntity<?> addFriend(@PathVariable UUID userId,@PathVariable UUID friendId) {
         try {
             userService.addFriend(userId, friendId);
             return ResponseEntity.ok(new Response("Friend added successfully!"));
+        } catch (Exception e) {
+            throw new ResponseStatusException(BAD_REQUEST, e.getMessage());
+        }
+    }
+
+    @PostMapping("delete/{userId}/{friendId}")
+    public ResponseEntity<?> deleteFriend(@PathVariable UUID userId,@PathVariable UUID friendId) {
+        try {
+            userService.deleteFriend(userId, friendId);
+            return ResponseEntity.ok(new Response("Friend deleted successfully!"));
         } catch (Exception e) {
             throw new ResponseStatusException(BAD_REQUEST, e.getMessage());
         }

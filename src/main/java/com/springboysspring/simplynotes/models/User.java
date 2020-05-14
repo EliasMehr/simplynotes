@@ -1,9 +1,7 @@
 package com.springboysspring.simplynotes.models;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -13,6 +11,8 @@ import javax.validation.constraints.*;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
+import lombok.SneakyThrows;
+import org.jetbrains.annotations.NotNull;
 
 import static com.springboysspring.simplynotes.models.Friendship.Status.PENDING;
 import static javax.persistence.CascadeType.ALL;
@@ -90,8 +90,16 @@ public class User {
     }
 
     public void deleteFriend(User friend){
-        friendships.remove(friend);
-        friend.deleteFriend(this);
+        Friendship ownerFriendship = getFriendshipByUser(this.friendships,friend);
+        Friendship friendsFriendships = getFriendshipByUser(friend.friendships, this);
+        this.friendships.remove(ownerFriendship);
+        friend.friendships.remove(friendsFriendships);
+    }
+
+    @NotNull
+    private Friendship getFriendshipByUser(Set<Friendship> friendships,User friend) {
+        return friendships.stream()
+            .filter(e -> e.getFriend().equals(friend)).findAny().get();
     }
 
     public void addNote(Note note) {
