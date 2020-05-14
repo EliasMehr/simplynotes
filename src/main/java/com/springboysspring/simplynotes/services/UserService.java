@@ -39,6 +39,7 @@ public class UserService {
 
     }
 
+
     public List<User> searchUsers(String firstName, String lastName, String email) {
         return userRepository.
             findByFirstNameIgnoreCaseOrLastNameIgnoreCaseOrEmailIgnoreCase(

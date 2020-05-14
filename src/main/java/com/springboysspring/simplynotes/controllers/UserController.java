@@ -10,6 +10,8 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -41,7 +43,7 @@ public class UserController {
             throw new ResponseStatusException(BAD_REQUEST, e.getMessage());
         }
     }
-
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
     @GetMapping()
     public ResponseEntity<?> searchUsers(@RequestParam(required = false) String firstName, String lastName, String email) {
         try {
@@ -52,7 +54,8 @@ public class UserController {
         }
     }
 
-    @PostMapping("add/{userId}/{friendId}")  
+    @PreAuthorize("hasRole('USER')")
+    @PostMapping("/{userId}/{friendId}")
     public ResponseEntity<?> addFriend(@PathVariable UUID userId,@PathVariable UUID friendId) {
         try {
             userService.addFriend(userId, friendId);
@@ -61,8 +64,8 @@ public class UserController {
             throw new ResponseStatusException(BAD_REQUEST, e.getMessage());
         }
     }
-
-    @PostMapping("delete/{userId}/{friendId}")
+    @PreAuthorize("hasRole('USER')")
+    @DeleteMapping("/{userId}/{friendId}")
     public ResponseEntity<?> deleteFriend(@PathVariable UUID userId,@PathVariable UUID friendId) {
         try {
             userService.deleteFriend(userId, friendId);
@@ -71,4 +74,6 @@ public class UserController {
             throw new ResponseStatusException(BAD_REQUEST, e.getMessage());
         }
     }
+
+    //TODO - ACCEPT FRIEND REQUEST&DENY
 }

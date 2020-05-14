@@ -6,10 +6,11 @@ import com.springboysspring.simplynotes.repositories.UserRepository;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.function.BiConsumer;
+import javax.transaction.Transactional;
 
 public class UserHandler {
 
-
+    @Transactional
     public void invoke(UUID userId, UUID friendId,
         String authenticatedUserEmail,
         BiConsumer<User, User> handleTheUserRequest,
