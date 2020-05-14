@@ -81,16 +81,6 @@ public class User {
         friend.friendships.add(new Friendship(friend, this));
     }
 
-    public void addAppointment(Appointment appointment) {
-        appointments.add(appointment);
-        appointment.addAttendee(this);
-    }
-
-    public void removeAppointment(Appointment appointment) {
-        appointments.remove(appointment);
-        appointment.removeAttendee(null);
-    }
-
     public void addNote(Note note) {
         notes.add(note);
         note.setOwner(this);

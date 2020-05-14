@@ -25,8 +25,8 @@ public class AppointmentService {
     }
 
     // GET APPOINTMENT FOR USER
-    public List<Appointment> getAllAppointmentsByUser(UUID id) throws Exception {
-        Optional<User> userById = userRepository.findById(id);
+    public List<Appointment> getAllAppointmentsByUser(UUID userId) throws Exception {
+        Optional<User> userById = userRepository.findById(userId);
 
         if (userById.isPresent()) {
             return appointmentRepository.findAllByAttendees(userById.get());
@@ -35,11 +35,12 @@ public class AppointmentService {
     }
 
     // CREATE APPOINTMENTS FOR USER
-    public void add(UUID id, Appointment appointment) throws Exception {
-        Optional<User> userById = userRepository.findById(id);
+    public void add(UUID userId, Appointment appointment) throws Exception {
+        Optional<User> userById = userRepository.findById(userId);
 
         if (userById.isPresent()) {
-            userById.get().addAppointment(appointment);
+            User user = userById.get();
+            appointment.addAttendee(user);
         }
         try {
             appointmentRepository.save(appointment);
@@ -49,31 +50,65 @@ public class AppointmentService {
     }
 
     // DELETE APPOINTMENT FOR USER
-    public void delete(UUID id) throws Exception {
+    public void delete(UUID appointmentId) throws Exception {
+        Optional<Appointment> appointment = appointmentRepository.findById(appointmentId);
         try {
-            appointmentRepository.findById(id);
+            appointmentRepository.delete(appointment.get());
         } catch (Exception e) {
-            throw new Exception("No appointment exists with id: " + id);
+            throw new Exception("No appointment exists with id: " + appointmentId);
         }
     }
 
     // UPDATE APPOINTMENT FOR USER
-    public void update(UUID id, Appointment appointment) throws Exception {
-        Optional<Appointment> existingAppointment = appointmentRepository.findById(id);
+    public void update(UUID appointmentId, Appointment appointment) throws Exception {
+        Optional<Appointment> existingAppointment = appointmentRepository.findById(appointmentId);
 
         if (existingAppointment.isPresent()) {
             existingAppointment.get().setTitle(appointment.getTitle());
             existingAppointment.get().setDescription(appointment.getDescription());
-//            existingAppointment.get().setAppointmentTime(appointment.getAppointmentTime());
-            existingAppointment.get().setAttendees(appointment.getAttendees());
             existingAppointment.get().setEstimatedTime(appointment.getEstimatedTime());
             try {
-                appointmentRepository.save(existingAppointment.get());
+                Appointment updatedAppointment = existingAppointment.get();
+                appointmentRepository.save(updatedAppointment);
             } catch (Exception e) {
                 throw new Exception("Could not update this appointment");
             }
         } else {
-            throw new Exception("No Appointment with following id; " + id + " exists");
+            throw new Exception("No Appointment with following id: " + appointmentId + " exists");
+        }
+    }
+
+    // ADD FRIEND TO AN APPOINTMENT AFTER CREATED AN APPOINTMENT
+
+    public void addAttendee(UUID appointmentId, UUID attendeeId) throws Exception {
+        Optional<Appointment> appointmentById = appointmentRepository.findById(appointmentId);
+        Optional<User> attendeeById = userRepository.findById(attendeeId);
+
+        if (appointmentById.isPresent()) {
+            Appointment appointment = appointmentById.get();
+            appointment.addAttendee(attendeeById.get());
+            try {
+                appointmentRepository.save(appointment);
+            } catch (Exception e) {
+                e.printStackTrace();
+                throw new Exception("Could not add attendee to appointment");
+            }
+        } else {
+            throw new Exception("No Appointment with following id: " + appointmentId + " exists");
+        }
+    }
+
+    public void remove(UUID appointmentId, UUID attendeeId) throws Exception {
+        Optional<Appointment> appointment = appointmentRepository.findById(appointmentId);
+        Optional<User> attendee = userRepository.findById(attendeeId);
+        if (appointment.isPresent()) {
+            User user = attendee.get();
+            appointment.get().removeAttendee(user);
+        }
+        try {
+            appointmentRepository.save(appointment.get());
+        } catch (Exception e) {
+            throw new Exception("Could not remove entered user or does not exist");
         }
     }
 }

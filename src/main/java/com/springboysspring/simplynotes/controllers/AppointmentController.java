@@ -15,7 +15,7 @@ import java.util.UUID;
 
 
 @RestController
-@RequestMapping("/appointments/user")
+@RequestMapping("/appointments")
 public class AppointmentController {
 
     private AppointmentService appointmentService;
@@ -75,6 +75,33 @@ public class AppointmentController {
             return ResponseEntity.ok("This appointment has been successfully updated");
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
+    }
+
+    // ADD AN ATTENDEE TO A EXISTING APPOINTMENT
+    @Transactional
+    @PreAuthorize("hasRole('USER')")
+    @PatchMapping("/{id}")
+    public ResponseEntity<String> addAttendee(@PathVariable UUID id, @RequestParam(name = "add") UUID attendeeId) {
+        try {
+            appointmentService.addAttendee(id, attendeeId);
+            return ResponseEntity.ok("Added Attendee with id: " + attendeeId + " successfully");
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
+    }
+
+
+    // REMOVE AN ATTENDEE FROM AN EXISTING APPOINTMENT
+    @Transactional
+    @PreAuthorize("hasRole('USER')")
+    @PatchMapping("/{appointmentId}")
+    public ResponseEntity<String> removeAttendee(@PathVariable UUID appointmentId, @RequestParam(name = "remove") UUID attendeeId) {
+        try {
+            appointmentService.remove(appointmentId, attendeeId);
+            return ResponseEntity.ok("Successfully removed: " + attendeeId);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Couldn't remove attendee");
         }
     }
 }
