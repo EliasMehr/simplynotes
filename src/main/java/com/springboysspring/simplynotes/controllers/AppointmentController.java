@@ -81,10 +81,10 @@ public class AppointmentController {
     // ADD AN ATTENDEE TO A EXISTING APPOINTMENT
     @Transactional
     @PreAuthorize("hasRole('USER')")
-    @PatchMapping("/{id}")
-    public ResponseEntity<String> addAttendee(@PathVariable UUID id, @RequestParam(name = "add") UUID attendeeId) {
+    @PatchMapping("/manage-appointment/{appointmentId}")
+    public ResponseEntity<String> addAttendee(@PathVariable UUID appointmentId, @RequestParam(name = "add") UUID attendeeId) {
         try {
-            appointmentService.addAttendee(id, attendeeId);
+            appointmentService.addAttendee(appointmentId, attendeeId);
             return ResponseEntity.ok("Added Attendee with id: " + attendeeId + " successfully");
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
@@ -95,7 +95,7 @@ public class AppointmentController {
     // REMOVE AN ATTENDEE FROM AN EXISTING APPOINTMENT
     @Transactional
     @PreAuthorize("hasRole('USER')")
-    @PatchMapping("/{appointmentId}")
+    @PatchMapping("/manage-appointment//attendee/{appointmentId}")
     public ResponseEntity<String> removeAttendee(@PathVariable UUID appointmentId, @RequestParam(name = "remove") UUID attendeeId) {
         try {
             appointmentService.remove(appointmentId, attendeeId);

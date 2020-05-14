@@ -1,5 +1,6 @@
 package com.springboysspring.simplynotes.services;
 
+import com.springboysspring.simplynotes.exceptions.APIRequestException;
 import com.springboysspring.simplynotes.models.Appointment;
 import com.springboysspring.simplynotes.models.User;
 import com.springboysspring.simplynotes.repositories.AppointmentRepository;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Stream;
 
 
 @Service
@@ -78,7 +80,7 @@ public class AppointmentService {
         }
     }
 
-    // ADD FRIEND TO AN APPOINTMENT AFTER CREATED AN APPOINTMENT
+    // ADD ATTENDEE TO AN APPOINTMENT AFTER CREATED AN APPOINTMENT
 
     public void addAttendee(UUID appointmentId, UUID attendeeId) throws Exception {
         Optional<Appointment> appointmentById = appointmentRepository.findById(appointmentId);
@@ -86,11 +88,20 @@ public class AppointmentService {
 
         if (appointmentById.isPresent()) {
             Appointment appointment = appointmentById.get();
-            appointment.addAttendee(attendeeById.get());
+
+            Optional<User> isUserAlreadyInAppointment = appointment.getAttendees().stream()
+                    .filter(attendee -> attendee.getId().equals(attendeeById.get().getId()))
+                    .findFirst();
+
+            if (!isUserAlreadyInAppointment.get().equals(attendeeById.get())) {
+                appointment.addAttendee(attendeeById.get());
+            } else {
+                throw new Exception("Attendee is already in appointment");
+            }
+
             try {
                 appointmentRepository.save(appointment);
             } catch (Exception e) {
-                e.printStackTrace();
                 throw new Exception("Could not add attendee to appointment");
             }
         } else {
@@ -98,6 +109,7 @@ public class AppointmentService {
         }
     }
 
+    // REMOVE AN EXISTING ATTENDEE FROM AN APPOINTMENT
     public void remove(UUID appointmentId, UUID attendeeId) throws Exception {
         Optional<Appointment> appointment = appointmentRepository.findById(appointmentId);
         Optional<User> attendee = userRepository.findById(attendeeId);
