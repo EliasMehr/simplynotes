@@ -2,6 +2,7 @@ package com.springboysspring.simplynotes.repositories;
 
 import com.springboysspring.simplynotes.models.User;
 import java.util.List;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -13,7 +14,8 @@ public interface UserRepository extends JpaRepository<User, UUID> {
 
     Optional<User> findByEmail(String username);
 
-    Optional<User> findById(UUID id);
+    @NotNull Optional<User> findById(UUID id);
 
-    List<User> findByFirstNameOrLastNameOrEmail(String firstName,String lastName,String email);
+    List<User> findByFirstNameOrLastNameOrEmailIgnoreCase(String firstName,String lastName,String email);
+
 }

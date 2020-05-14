@@ -81,13 +81,17 @@ public class User {
     }
 
     public void addFriend(User friend) {
-
         Friendship friendship = new Friendship(this, friend);
         friendship.setStatus(PENDING);
         friendships.add(friendship);
         Friendship friendFriendShip = new Friendship(friend, this);
         friendFriendShip.setStatus(PENDING);
         friend.friendships.add(friendFriendShip);
+    }
+
+    public void deleteFriend(User friend){
+        friendships.remove(friend);
+        friend.deleteFriend(this);
     }
 
     public void addNote(Note note) {
