@@ -27,7 +27,7 @@ public class AppointmentController {
 
     // GET ALL APPOINTMENTS FOR USER
     @PreAuthorize("hasRole('USER')")
-    @GetMapping("/{id}")
+    @GetMapping("manage-appointment/user/{id}")
     public ResponseEntity<List<Appointment>> getAppointments(@PathVariable UUID id) {
         try {
             List<Appointment> allAppointments = appointmentService.getAllAppointmentsByUser(id);
@@ -38,10 +38,9 @@ public class AppointmentController {
     }
 
     // CREATE APPOINTMENTS FOR USER
-
     @PreAuthorize("hasRole('USER')")
     @Transactional
-    @PostMapping("/{id}")
+    @PostMapping("manage-appointment/{id}")
     public ResponseEntity<String> create(@PathVariable UUID id, @RequestBody Appointment appointment) {
         try {
             appointmentService.add(id, appointment);
@@ -54,7 +53,7 @@ public class AppointmentController {
     // DELETE APPOINTMENT FOR USER
     @Transactional
     @PreAuthorize("hasRole('USER')")
-    @DeleteMapping("/{id}")
+    @DeleteMapping("manage-appointment/{id}")
     public ResponseEntity<String> deleteById(@PathVariable UUID id) {
         try {
             appointmentService.delete(id);
@@ -68,8 +67,8 @@ public class AppointmentController {
     // UPDATE APPOINTMENT FOR USER
     @Transactional
     @PreAuthorize("hasRole('USER')")
-    @PutMapping("/{id}")
-    public ResponseEntity<String> update(@PathVariable UUID id, @RequestBody Appointment appointment) {
+    @PutMapping("manage-appointment/{id}")
+    public ResponseEntity<String> update(@PathVariable  UUID id, @RequestBody Appointment appointment) {
         try {
             appointmentService.update(id, appointment);
             return ResponseEntity.ok("This appointment has been successfully updated");
@@ -81,10 +80,10 @@ public class AppointmentController {
     // ADD AN ATTENDEE TO A EXISTING APPOINTMENT
     @Transactional
     @PreAuthorize("hasRole('USER')")
-    @PatchMapping("/{id}")
-    public ResponseEntity<String> addAttendee(@PathVariable UUID id, @RequestParam(name = "add") UUID attendeeId) {
+    @PatchMapping("/manage-appointment/{appointmentId}/attendee")
+    public ResponseEntity<String> addAttendee(@PathVariable UUID appointmentId, @RequestParam(name = "add") UUID attendeeId) {
         try {
-            appointmentService.addAttendee(id, attendeeId);
+            appointmentService.addAttendee(appointmentId, attendeeId);
             return ResponseEntity.ok("Added Attendee with id: " + attendeeId + " successfully");
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
@@ -95,7 +94,7 @@ public class AppointmentController {
     // REMOVE AN ATTENDEE FROM AN EXISTING APPOINTMENT
     @Transactional
     @PreAuthorize("hasRole('USER')")
-    @PatchMapping("/{appointmentId}")
+    @PatchMapping("/manage-appointment/{appointmentId}/manage-attendee")
     public ResponseEntity<String> removeAttendee(@PathVariable UUID appointmentId, @RequestParam(name = "remove") UUID attendeeId) {
         try {
             appointmentService.remove(appointmentId, attendeeId);

@@ -13,8 +13,8 @@ import javax.transaction.Transactional;
 import java.util.List;
 import java.util.UUID;
 
-@RequestMapping("/notes")
 @RestController
+@RequestMapping("/notes")
 public class NoteController {
 
     private NoteService noteService;
