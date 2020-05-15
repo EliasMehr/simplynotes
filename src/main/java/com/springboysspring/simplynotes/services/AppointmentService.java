@@ -89,11 +89,11 @@ public class AppointmentService {
         if (appointmentById.isPresent()) {
             Appointment appointment = appointmentById.get();
 
-            Optional<User> isUserAlreadyInAppointment = appointment.getAttendees().stream()
-                    .filter(attendee -> attendee.getId().equals(attendeeById.get().getId()))
+            Optional<User> userOptional = appointment.getAttendees().stream()
+                    .filter(attendee -> attendee.getId().equals(attendeeId))
                     .findFirst();
 
-            if (!isUserAlreadyInAppointment.get().equals(attendeeById.get())) {
+            if (userOptional.isEmpty()) {
                 appointment.addAttendee(attendeeById.get());
             } else {
                 throw new Exception("Attendee is already in appointment");

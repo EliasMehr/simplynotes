@@ -12,7 +12,8 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
-public class ToDoService {
+public
+class ToDoService {
     private ToDoRepository toDoRepository;
     private UserRepository userRepository;
 
