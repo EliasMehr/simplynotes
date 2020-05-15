@@ -14,7 +14,7 @@ import java.util.UUID;
 @RequestMapping("/api/todo")
 public class ToDoController {
 
-    private TodoService todoService;
+    private final TodoService todoService;
 
     @Autowired
     public ToDoController(TodoService todoService) {

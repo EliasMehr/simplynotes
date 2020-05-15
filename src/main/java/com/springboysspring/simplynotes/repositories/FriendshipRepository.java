@@ -16,7 +16,9 @@ import java.util.UUID;
 @Repository
 public interface FriendshipRepository extends JpaRepository<Friendship, UUID> {
 
-     List<Friendship> findAllByOwnerId(UUID owner_id);
+     Optional<Friendship> findByOwnerIdAndFriendId(UUID owner_id, UUID friend_id);
+     Optional<Friendship> findByFriendIdAndOwnerId(UUID friend_id, UUID owner_id);
+
 
      List<Friendship> findAllByOwnerAndFriendshipStatus(User owner, FriendshipStatus friendshipStatus);
 

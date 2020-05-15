@@ -1,5 +1,8 @@
 package com.springboysspring.simplynotes.models;
 
+import static com.springboysspring.simplynotes.models.FriendshipStatus.ACCEPTED;
+import static com.springboysspring.simplynotes.models.FriendshipStatus.DECLINED;
+
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
@@ -46,4 +49,15 @@ public class Friendship {
         private UUID ownerId;
         private UUID friendId;
     }
+
+    public void acceptFriendRequest(Friendship friend){
+        this.setFriendshipStatus(ACCEPTED);
+        friend.setFriendshipStatus(ACCEPTED);
+    }
+
+    public void declineFriendRequest(Friendship friend){
+        this.setFriendshipStatus(DECLINED);
+        friend.setFriendshipStatus(DECLINED);
+    }
+
 }

@@ -14,6 +14,7 @@ import java.util.UUID;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.data.jpa.repository.Query;
 
+import static com.springboysspring.simplynotes.models.FriendshipStatus.ACCEPTED;
 import static com.springboysspring.simplynotes.models.FriendshipStatus.PENDING;
 import static javax.persistence.CascadeType.ALL;
 import static javax.persistence.FetchType.EAGER;
