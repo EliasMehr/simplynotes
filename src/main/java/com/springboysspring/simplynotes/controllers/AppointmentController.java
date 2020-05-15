@@ -80,8 +80,8 @@ public class AppointmentController {
     // ADD AN ATTENDEE TO A EXISTING APPOINTMENT
     @Transactional
     @PreAuthorize("hasRole('USER')")
-    @PatchMapping("/manage-appointment/{appointmentId}/attendee")
-    public ResponseEntity<String> addAttendee(@PathVariable UUID appointmentId, @RequestParam(name = "add") UUID attendeeId) {
+    @PatchMapping("/manage-appointment/{appointmentId}/add")
+    public ResponseEntity<String> addAttendee(@PathVariable UUID appointmentId, @RequestParam(name = "id") UUID attendeeId) {
         try {
             appointmentService.addAttendee(appointmentId, attendeeId);
             return ResponseEntity.ok("Added Attendee with id: " + attendeeId + " successfully");
@@ -94,8 +94,8 @@ public class AppointmentController {
     // REMOVE AN ATTENDEE FROM AN EXISTING APPOINTMENT
     @Transactional
     @PreAuthorize("hasRole('USER')")
-    @PatchMapping("/manage-appointment/{appointmentId}/manage-attendee")
-    public ResponseEntity<String> removeAttendee(@PathVariable UUID appointmentId, @RequestParam(name = "remove") UUID attendeeId) {
+    @PatchMapping("/manage-appointment/{appointmentId}/remove")
+    public ResponseEntity<String> removeAttendee(@PathVariable UUID appointmentId, @RequestParam(name = "id") UUID attendeeId) {
         try {
             appointmentService.remove(appointmentId, attendeeId);
             return ResponseEntity.ok("Successfully removed: " + attendeeId);
