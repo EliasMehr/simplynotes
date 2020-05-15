@@ -9,9 +9,7 @@ import com.springboysspring.simplynotes.services.handlers.UserHandler;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -76,16 +74,20 @@ public class UserService {
                 userRepository);
     }
 
-    public List<Friendship> getFriendsByStatus( UUID userId,FriendshipStatus friendshipStatus) {
+    public List<Friendship> getFriendsByStatus(UUID userId, FriendshipStatus friendshipStatus) {
 
         Optional<User> optionalUser = userRepository.findById(userId);
         userHandler.checkUserInput(
             optionalUser.isEmpty(),
             String.format("User with id: %s does not exists", userId));
-        userHandler.checkUserInput(
-            !optionalUser.get().getEmail().equalsIgnoreCase(authenticatedUserEmail.getAuthenticatedUserEmail()),
-            "Permission denied!");
 
-        return new ArrayList<>(friendshipRepository.findAllByOwnerAndFriendshipStatus(optionalUser.get(), friendshipStatus));
+        String authenticatedUserEmail = this.authenticatedUserEmail.getAuthenticatedUserEmail();
+        User owner = optionalUser.get();
+
+        userHandler.checkUserInput(
+            userHandler.doesUserEmailEqualsAuthenticatedUserEmail(authenticatedUserEmail, owner),
+            String.format("Permission denied! User with email: %s does not have the id: %s", authenticatedUserEmail, userId));
+
+        return new ArrayList<>(friendshipRepository.findAllByOwnerAndFriendshipStatus(owner, friendshipStatus));
     }
 }

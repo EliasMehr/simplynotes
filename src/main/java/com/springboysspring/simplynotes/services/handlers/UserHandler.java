@@ -21,7 +21,7 @@ public class UserHandler {
         if (user.isPresent()) {
             User currentUser = user.get();
             checkUserInput(
-                !currentUser.getEmail().equalsIgnoreCase(authenticatedUserEmail),
+                doesUserEmailEqualsAuthenticatedUserEmail(authenticatedUserEmail, currentUser),
                 "You dont have the permission to add/delete friends for other users!");
 
             checkUserInput(
@@ -39,6 +39,10 @@ public class UserHandler {
         } else {
             throw new APIRequestException(String.format("User with the id: %s does not exists!", userId));
         }
+    }
+
+    public boolean doesUserEmailEqualsAuthenticatedUserEmail(String authenticatedUserEmail, User currentUser) {
+        return !currentUser.getEmail().contentEquals(authenticatedUserEmail);
     }
 
     public void checkUserInput(boolean isUserInputWrong, String message) {
