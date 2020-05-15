@@ -2,9 +2,13 @@ package com.springboysspring.simplynotes.controllers;
 
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 
+import com.springboysspring.simplynotes.models.Friendship;
+import com.springboysspring.simplynotes.models.FriendshipStatus;
 import com.springboysspring.simplynotes.models.User;
 import com.springboysspring.simplynotes.response.Response;
 import com.springboysspring.simplynotes.services.UserService;
+import java.io.PipedOutputStream;
+import java.util.List;
 import java.util.UUID;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -75,5 +79,22 @@ public class UserController {
         }
     }
 
-    //TODO - ACCEPT FRIEND REQUEST&DENY
+    @PreAuthorize("hasRole('USER')")
+    @GetMapping("/{userId}")
+        public ResponseEntity<?> getFriendsByStatus(@PathVariable UUID userId ,@RequestParam(name = "status") FriendshipStatus friendshipStatus){
+        try {
+            List<Friendship> friendsByStatus = userService.getFriendsByStatus( userId, friendshipStatus);
+            return ResponseEntity.ok().body(friendsByStatus);
+        } catch (Exception e) {
+            throw new ResponseStatusException(BAD_REQUEST, e.getMessage());
+        }
+
+    }
+
+
+
+    //TODO -
+    // FRIEND ACCEPT
+    // &DENY /
+
 }

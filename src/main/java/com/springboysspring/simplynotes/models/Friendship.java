@@ -1,10 +1,7 @@
 package com.springboysspring.simplynotes.models;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonIgnoreType;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -21,7 +18,6 @@ public class Friendship {
         this.owner = owner;
         this.friend = friend;
     }
-
 
 //    @JsonManagedReference
     @EmbeddedId
@@ -40,12 +36,8 @@ public class Friendship {
     private User friend;
 
     @Enumerated(EnumType.STRING)
-    private Status status;
+    private FriendshipStatus friendshipStatus;
 
-
-    public enum Status {
-        ACCEPTED, PENDING, DECLINED
-    }
 
     @Data
     @NoArgsConstructor

@@ -11,10 +11,10 @@ import javax.validation.constraints.*;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
-import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.data.jpa.repository.Query;
 
-import static com.springboysspring.simplynotes.models.Friendship.Status.PENDING;
+import static com.springboysspring.simplynotes.models.FriendshipStatus.PENDING;
 import static javax.persistence.CascadeType.ALL;
 import static javax.persistence.FetchType.EAGER;
 
@@ -22,6 +22,7 @@ import static javax.persistence.FetchType.EAGER;
 @Getter
 @Setter
 @NoArgsConstructor
+
 public class User {
 
     @Id
@@ -82,10 +83,10 @@ public class User {
 
     public void addFriend(User friend) {
         Friendship friendship = new Friendship(this, friend);
-        friendship.setStatus(PENDING);
+        friendship.setFriendshipStatus(PENDING);
         friendships.add(friendship);
         Friendship friendFriendShip = new Friendship(friend, this);
-        friendFriendShip.setStatus(PENDING);
+        friendFriendShip.setFriendshipStatus(PENDING);
         friend.friendships.add(friendFriendShip);
     }
 
