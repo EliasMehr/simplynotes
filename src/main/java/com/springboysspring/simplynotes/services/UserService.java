@@ -53,26 +53,15 @@ public class UserService {
 
     public List<User> searchUsers(String firstName, String lastName, String email) {
         return userRepository.
-            findByFirstNameIgnoreCaseOrLastNameIgnoreCaseOrEmailIgnoreCase(
-                firstName,
-                lastName,
-                email);
+            findByFirstNameIgnoreCaseOrLastNameIgnoreCaseOrEmailIgnoreCase(firstName, lastName, email);
     }
 
     public void addFriend(UUID userId, UUID friendId) {
-        userHandler
-            .invoke(
-                userId,
-                friendId,
-                User::addFriend);
+        userHandler.invoke(userId, friendId, User::addFriend);
     }
 
     public void deleteFriend(UUID userId, UUID friendId) {
-        userHandler
-            .invoke(
-                userId,
-                friendId,
-                User::deleteFriend);
+        userHandler.invoke(userId, friendId, User::deleteFriend);
     }
 
     public String changeFriendshipStatus(UUID userId, UUID friendId, FriendshipStatus status) {

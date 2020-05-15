@@ -67,7 +67,7 @@ public class UserController {
             throw new ResponseStatusException(BAD_REQUEST, e.getMessage());
         }
     }
-    //Unnecessary
+
 
     @PreAuthorize("hasRole('USER')")
     @DeleteMapping("/{userId}/{friendId}")
