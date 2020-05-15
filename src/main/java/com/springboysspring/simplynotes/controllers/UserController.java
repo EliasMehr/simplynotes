@@ -31,11 +31,9 @@ public class UserController {
 
     private final UserService userService;
 
-
     @Autowired
     public UserController(UserService userService) {
         this.userService = userService;
-
     }
 
     @PostMapping("/signup")
@@ -103,8 +101,4 @@ public class UserController {
             throw new ResponseStatusException(BAD_REQUEST, e.getMessage());
         }
     }
-
-    //TODO -
-    // &DENY /
-
 }

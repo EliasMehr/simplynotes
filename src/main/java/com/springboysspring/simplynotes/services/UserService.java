@@ -24,7 +24,6 @@ public class UserService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder;
     private final AuthenticatedUserEmail authenticatedUserEmail;
-
     private final UserHandler userHandler;
     private final FriendshipRepository friendshipRepository;
     private final FriendshipHandler friendshipHandler;
@@ -60,29 +59,24 @@ public class UserService {
                 email);
     }
 
-
     public void addFriend(UUID userId, UUID friendId) {
         userHandler
             .invoke(
                 userId,
                 friendId,
-                authenticatedUserEmail.getAuthenticatedUserEmail(),
                 User::addFriend);
     }
-
 
     public void deleteFriend(UUID userId, UUID friendId) {
         userHandler
             .invoke(
                 userId,
                 friendId,
-                authenticatedUserEmail.getAuthenticatedUserEmail(),
                 User::deleteFriend);
     }
 
-
     public String changeFriendshipStatus(UUID userId, UUID friendId, FriendshipStatus status) {
-        verifyUsers(userId, friendId);
+       userHandler.verifyUsers(userId, friendId);
         switch (status) {
             case ACCEPTED -> {
                 changeStatus(userId, friendId, Friendship::acceptFriendRequest);
@@ -96,17 +90,11 @@ public class UserService {
         }
     }
 
-
     private void changeStatus(UUID userId,
         UUID friendId,
         BiConsumer<Friendship, Friendship> changeFriendshipStatus) {
         friendshipHandler
-            .invoke(
-                userId,
-                friendId,
-                friendshipRepository,
-                changeFriendshipStatus
-            );
+            .invoke(userId, friendId, changeFriendshipStatus);
     }
 
     public List<Friendship> getFriendsByStatus(UUID userId, FriendshipStatus friendshipStatus) {
@@ -116,16 +104,4 @@ public class UserService {
         userHandler.checkForAuthentication(optionalUser.get(), authenticatedUserEmail);
         return new ArrayList<>(friendshipRepository.findAllByOwnerAndFriendshipStatus(optionalUser.get(), friendshipStatus));
     }
-
-    private void verifyUsers(UUID userId, UUID friendId) {
-        Optional<User> optionalUser = userRepository.findById(userId);
-        userHandler.isUserAMember(userId, optionalUser);
-        Optional<User> friendOptional = userRepository.findById(friendId);
-        userHandler.isUserAMember(friendId, friendOptional);
-
-        String authenticatedUserEmail = this.authenticatedUserEmail.getAuthenticatedUserEmail();
-        userHandler.checkForAuthentication(optionalUser.get(), authenticatedUserEmail);
-    }
-
-
 }

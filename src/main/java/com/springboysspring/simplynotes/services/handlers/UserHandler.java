@@ -3,6 +3,7 @@ package com.springboysspring.simplynotes.services.handlers;
 import com.springboysspring.simplynotes.exceptions.APIRequestException;
 import com.springboysspring.simplynotes.models.User;
 import com.springboysspring.simplynotes.repositories.UserRepository;
+import com.springboysspring.simplynotes.services.AuthenticatedUserEmail;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.function.BiConsumer;
@@ -14,22 +15,23 @@ import org.springframework.stereotype.Service;
 public class UserHandler {
 
     private final UserRepository userRepository;
+    private final AuthenticatedUserEmail authenticatedUserEmail;
 
     @Autowired
-    public UserHandler(UserRepository userRepository) {
+    public UserHandler(UserRepository userRepository,
+        AuthenticatedUserEmail authenticatedUserEmail) {
         this.userRepository = userRepository;
+        this.authenticatedUserEmail = authenticatedUserEmail;
     }
 
     @Transactional
-    public void invoke(UUID userId, UUID friendId, String authenticatedUserEmail,
-        BiConsumer<User, User> handleTheUserRequest
-        ) {
+    public void invoke(UUID userId, UUID friendId, BiConsumer<User, User> handleTheUserRequest) {
 
         Optional<User> user = userRepository.findById(userId);
         if (user.isPresent()) {
             User currentUser = user.get();
             verifyUserInputOrElseThrowException(
-                isUserEmailSameAsAuthenticatedUserEmail(authenticatedUserEmail, currentUser),
+                isUserEmailSameAsAuthenticatedUserEmail(authenticatedUserEmail.getAuthenticatedUserEmail(), currentUser),
                 "You dont have the permission to add/delete friends for other users!");
 
             verifyUserInputOrElseThrowException(
@@ -68,6 +70,11 @@ public class UserHandler {
         if (isUserInputWrong)  throw new APIRequestException(message);
     }
 
-
-
+    public void verifyUsers(UUID userId, UUID friendId) {
+        Optional<User> optionalUser = userRepository.findById(userId);
+        isUserAMember(userId, optionalUser);
+        Optional<User> friendOptional = userRepository.findById(friendId);
+        isUserAMember(friendId, friendOptional);
+        checkForAuthentication(optionalUser.get(), authenticatedUserEmail.getAuthenticatedUserEmail());
+    }
 }

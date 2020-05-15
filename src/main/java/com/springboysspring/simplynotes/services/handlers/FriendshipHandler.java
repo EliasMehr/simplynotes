@@ -10,16 +10,23 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.function.BiConsumer;
 import javax.transaction.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class FriendshipHandler {
 
+    private final FriendshipRepository friendshipRepository;
+
+    @Autowired
+    public FriendshipHandler(FriendshipRepository friendshipRepository) {
+        this.friendshipRepository = friendshipRepository;
+    }
+
     @Transactional
     public void invoke(
         UUID userId,
         UUID friendId,
-        FriendshipRepository friendshipRepository,
         BiConsumer<Friendship, Friendship> changeFriendshipStatus
     ) {
 
