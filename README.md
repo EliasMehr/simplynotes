@@ -23,6 +23,6 @@ mimic the real world working environment to achieve experience how professional 
 
 The idea was to combine all experience under our school period and work with the knowledge that we have.
 We've learned by our own intresses spring security, react, postgreSQL, heroku and JWT which we did NOT
-learn udner our school period. 
+learn under our school period. 
 
 
