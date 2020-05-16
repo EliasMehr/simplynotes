@@ -36,7 +36,7 @@ public class User {
     private String firstName;
 
     @NotBlank
-    @Size(min = 2, max = 20)
+    @Size(min = 2, max = 50)
     @Pattern(regexp = "([a-zA-ZAÖÅöäå]{2,})|([a-zA-ZöäåÅÖÄ-]){2,}([ ]?)([a-zA-ZöäåÅÖÄ]){2,}", message = "Invalid name format")
     private String lastName;
 
@@ -54,14 +54,14 @@ public class User {
     @JoinColumn(name = "role_id")
     private Role role = defaultRole();
 
-    @JsonManagedReference
+    //@JsonManagedReference
     @OneToMany(fetch = EAGER,
             mappedBy = "owner",
             cascade = ALL)
     private Set<Note> notes = new HashSet<>();
 
 
-    @JsonManagedReference
+    //@JsonManagedReference
     @OneToMany(fetch = EAGER,
             mappedBy = "owner",
             cascade = ALL)
@@ -70,8 +70,7 @@ public class User {
     @ManyToMany(fetch = EAGER, mappedBy = "attendees")
     private Set<Appointment> appointments = new HashSet<>();
 
-//    @JsonManagedReference
-
+    //@JsonManagedReference
     @OneToMany(fetch = EAGER, mappedBy = "owner", cascade = ALL, orphanRemoval = true)
     @JsonIgnoreProperties({"friendshipId"})
     private Set<Friendship> friendships = new HashSet<>();
