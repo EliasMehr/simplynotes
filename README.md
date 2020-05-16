@@ -1,7 +1,7 @@
 # Simply Notes 2020
 
 ### Nackademin School project Back-end
-Created by: Elias Mehr, Fazli Zekiqe, Johannes Svensson, Daniel Hughes, Jessie Eurenius
+Created by: Elias Mehr, Fazli Zekiqi, Johannes Svensson, Daniel Hughes, Jessie Eurenius
 
 ## Frameworks used:
 * Spring boot with Spring security & Spring Web
