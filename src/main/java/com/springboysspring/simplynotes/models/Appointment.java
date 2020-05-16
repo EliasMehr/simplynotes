@@ -22,7 +22,6 @@ public class Appointment {
     @GeneratedValue
     private UUID id;
 
-
     @NotBlank
     @Size(min = 1, max = 50)
     private String title;

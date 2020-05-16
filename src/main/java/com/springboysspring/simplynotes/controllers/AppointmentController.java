@@ -80,10 +80,10 @@ public class AppointmentController {
     // ADD AN ATTENDEE TO A EXISTING APPOINTMENT
     @Transactional
     @PreAuthorize("hasRole('USER')")
-    @PatchMapping("/manage-appointment/{appointmentId}/add")
-    public ResponseEntity<String> addAttendee(@PathVariable UUID appointmentId, @RequestParam(name = "id") UUID attendeeId) {
+    @PatchMapping("/manage-appointment/{appointmentId}/{currentUser}/add")
+    public ResponseEntity<String> addAttendee(@PathVariable UUID appointmentId, @PathVariable UUID currentUser, @RequestParam(name = "id") UUID attendeeId) {
         try {
-            appointmentService.addAttendee(appointmentId, attendeeId);
+            appointmentService.addAttendee(appointmentId, currentUser ,attendeeId);
             return ResponseEntity.ok("Added Attendee with id: " + attendeeId + " successfully");
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());

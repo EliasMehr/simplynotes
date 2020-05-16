@@ -1,17 +1,21 @@
 package com.springboysspring.simplynotes.services;
 
-import com.springboysspring.simplynotes.exceptions.APIRequestException;
 import com.springboysspring.simplynotes.models.Appointment;
+import com.springboysspring.simplynotes.models.Friendship;
+import com.springboysspring.simplynotes.models.FriendshipStatus;
 import com.springboysspring.simplynotes.models.User;
 import com.springboysspring.simplynotes.repositories.AppointmentRepository;
+import com.springboysspring.simplynotes.repositories.FriendshipRepository;
 import com.springboysspring.simplynotes.repositories.UserRepository;
+import com.springboysspring.simplynotes.services.handlers.FriendshipHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Stream;
+
+import static com.springboysspring.simplynotes.models.FriendshipStatus.*;
 
 
 @Service
@@ -19,11 +23,15 @@ public class AppointmentService {
 
     private UserRepository userRepository;
     private AppointmentRepository appointmentRepository;
+    private FriendshipHandler friendshipHandler;
+    private FriendshipRepository friendshipRepository;
 
     @Autowired
-    public AppointmentService(UserRepository userRepository, AppointmentRepository appointmentRepository) {
+    public AppointmentService(UserRepository userRepository, AppointmentRepository appointmentRepository, FriendshipHandler friendshipHandler, FriendshipRepository friendshipRepository) {
         this.userRepository = userRepository;
         this.appointmentRepository = appointmentRepository;
+        this.friendshipHandler = friendshipHandler;
+        this.friendshipRepository = friendshipRepository;
     }
 
     // GET APPOINTMENT FOR USER
@@ -82,31 +90,44 @@ public class AppointmentService {
 
     // ADD ATTENDEE TO AN APPOINTMENT AFTER CREATED AN APPOINTMENT
 
-    public void addAttendee(UUID appointmentId, UUID attendeeId) throws Exception {
+    public void addAttendee(UUID appointmentId, UUID currentUser, UUID attendeeId) throws Exception {
         Optional<Appointment> appointmentById = appointmentRepository.findById(appointmentId);
         Optional<User> attendeeById = userRepository.findById(attendeeId);
+        Optional<Friendship> byOwnerIdAndFriendId = friendshipRepository.findByOwnerIdAndFriendId(currentUser, attendeeId);
 
-        if (appointmentById.isPresent()) {
-            Appointment appointment = appointmentById.get();
+        if (byOwnerIdAndFriendId.isPresent()) {
+            boolean friendshipStatus = friendshipHandler.isFriendshipStatus(byOwnerIdAndFriendId.get(), ACCEPTED);
 
-            Optional<User> userOptional = appointment.getAttendees().stream()
-                    .filter(attendee -> attendee.getId().equals(attendeeId))
-                    .findFirst();
+            if (friendshipStatus) {
+                if (appointmentById.isPresent()) {
+                    Appointment appointment = appointmentById.get();
 
-            if (userOptional.isEmpty()) {
-                appointment.addAttendee(attendeeById.get());
+                    Optional<User> userOptional = appointment.getAttendees().stream()
+                            .filter(attendee -> attendee.getId().equals(attendeeId))
+                            .findFirst();
+
+                    if (userOptional.isEmpty()) {
+                        appointment.addAttendee(attendeeById.get());
+                    } else {
+                        throw new Exception("Attendee is already in appointment");
+                    }
+
+                    try {
+                        appointmentRepository.save(appointment);
+                    } catch (Exception e) {
+                        throw new Exception("Could not add attendee to appointment");
+                    }
+                } else {
+                    throw new Exception("No Appointment with following id: " + appointmentId + " exists");
+                }
             } else {
-                throw new Exception("Attendee is already in appointment");
-            }
-
-            try {
-                appointmentRepository.save(appointment);
-            } catch (Exception e) {
-                throw new Exception("Could not add attendee to appointment");
+                throw new Exception("Friend request is still pending");
             }
         } else {
-            throw new Exception("No Appointment with following id: " + appointmentId + " exists");
+            throw new Exception("You're not friend with selected user");
         }
+
+
     }
 
     // REMOVE AN EXISTING ATTENDEE FROM AN APPOINTMENT
