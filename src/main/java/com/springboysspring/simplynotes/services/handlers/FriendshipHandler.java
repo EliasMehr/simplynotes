@@ -5,6 +5,7 @@ import static com.springboysspring.simplynotes.models.FriendshipStatus.PENDING;
 
 import com.springboysspring.simplynotes.exceptions.APIRequestException;
 import com.springboysspring.simplynotes.models.Friendship;
+import com.springboysspring.simplynotes.models.FriendshipStatus;
 import com.springboysspring.simplynotes.repositories.FriendshipRepository;
 import java.util.Optional;
 import java.util.UUID;
@@ -37,7 +38,11 @@ public class FriendshipHandler {
             Friendship friendsFriendship = friendFriendship.get();
             Friendship currentUserFriendship = ownerFriendship.get();
 
-            if (friendsFriendship.getFriendshipStatus() == PENDING || friendsFriendship.getFriendshipStatus()== DECLINED) {
+            boolean ifFriendshipStatusPending = isFriendshipStatus(friendsFriendship, PENDING);
+            boolean isFriendshipStatusDeclined = isFriendshipStatus(friendsFriendship, DECLINED);
+
+
+            if (ifFriendshipStatusPending || isFriendshipStatusDeclined) {
                 changeFriendshipStatus.accept(currentUserFriendship, friendsFriendship);
                 friendshipRepository.save(friendsFriendship);
             } else {
@@ -47,5 +52,9 @@ public class FriendshipHandler {
         } else {
             throw new APIRequestException("Users have not a pending request");
         }
+    }
+
+    public boolean isFriendshipStatus(Friendship friendship, FriendshipStatus friendshipStatus){
+        return friendship.getFriendshipStatus()==friendshipStatus;
     }
 }

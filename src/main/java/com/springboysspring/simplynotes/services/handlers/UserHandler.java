@@ -18,8 +18,7 @@ public class UserHandler {
     private final AuthenticatedUserEmail authenticatedUserEmail;
 
     @Autowired
-    public UserHandler(UserRepository userRepository,
-        AuthenticatedUserEmail authenticatedUserEmail) {
+    public UserHandler(UserRepository userRepository, AuthenticatedUserEmail authenticatedUserEmail) {
         this.userRepository = userRepository;
         this.authenticatedUserEmail = authenticatedUserEmail;
     }
@@ -56,7 +55,7 @@ public class UserHandler {
         verifyUserInputOrElseThrowException(isUserAuthenticated, "Permission denied!");
     }
 
-    public  void isUserAMember(UUID userId, Optional<User> optionalFriend) {
+    public void isUserAMember(UUID userId, Optional<User> optionalFriend) {
         verifyUserInputOrElseThrowException(
             optionalFriend.isEmpty(),
             String.format("User with id: %s does not exists", userId));
@@ -67,7 +66,9 @@ public class UserHandler {
     }
 
     public void verifyUserInputOrElseThrowException(boolean isUserInputWrong, String message) {
-        if (isUserInputWrong)  throw new APIRequestException(message);
+        if (isUserInputWrong) {
+            throw new APIRequestException(message);
+        }
     }
 
     public void verifyUsers(UUID userId, UUID friendId) {
