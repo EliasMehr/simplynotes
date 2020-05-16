@@ -1,6 +1,5 @@
 package com.springboysspring.simplynotes.services;
 
-import com.springboysspring.simplynotes.exceptions.APIRequestException;
 import com.springboysspring.simplynotes.models.ToDo;
 import com.springboysspring.simplynotes.models.User;
 import com.springboysspring.simplynotes.repositories.ToDoRepository;
@@ -13,29 +12,59 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
-public class TodoService {
-
-    private final ToDoRepository toDoRepository;
-    private final UserRepository userRepository;
+public
+class ToDoService {
+    private ToDoRepository toDoRepository;
+    private UserRepository userRepository;
 
     @Autowired
-    public TodoService(ToDoRepository toDoRepository, UserRepository userRepository) {
+    public ToDoService(ToDoRepository toDoRepository, UserRepository userRepository) {
         this.toDoRepository = toDoRepository;
         this.userRepository = userRepository;
     }
 
-    public List<ToDo> getTodo(UUID id) {
-        Optional<User> userById = userRepository.findById(id);
-
-        if (userById.isPresent()) {
-            return toDoRepository.findAllByOwnerId(id);
+    public User getUser(UUID id) throws Exception { // Kanske kan vara en metod i userService ist
+        Optional<User> owner = userRepository.findById(id);
+        if (owner.isPresent()) {
+            return owner.get();
         }
-        throw new APIRequestException("User by this id: " + id + " does not exist");
+        throw new Exception("User not Found");
     }
 
-    public ToDo create(ToDo todo) {
+    public List<ToDo> getTodosByUserID(UUID id) throws Exception {
+        return toDoRepository.findAllByOwner(getUser(id));
+    }
 
+    public void addTodoToUserId(UUID id, ToDo toDo) throws Exception {
+        getUser(id).addTodo(toDo);
+        try {
+            toDoRepository.save(toDo);
+        } catch (Exception e) {
+            throw new Exception("Could not persist Todo to Database");
+        }
+    }
 
-        return null;
+    public void updateTodoById(UUID id, ToDo newToDo) throws Exception {
+        Optional<ToDo> oldToDo = toDoRepository.findById(id);
+        if (oldToDo.isPresent()) {
+            oldToDo.get().setTitle(newToDo.getTitle());
+            oldToDo.get().setContent(newToDo.getContent());
+            oldToDo.get().setPriority(newToDo.getPriority());
+            try {
+                toDoRepository.save(oldToDo.get());
+            } catch (Exception e) {
+                throw new Exception("Could not persist Todo to Database");
+            }
+        } else {
+            throw new Exception("No Todo with that id exists");
+        }
+    }
+
+    public void deleteTodoById(UUID id) throws Exception {
+        try {
+            toDoRepository.deleteById(id);
+        } catch (Exception e) {
+            throw new Exception("No Todo with that id exists");
+        }
     }
 }

@@ -1,34 +1,30 @@
 package com.springboysspring.simplynotes.security.Jwt;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Strings;
 import com.springboysspring.simplynotes.exceptions.APIRequestException;
-import io.jsonwebtoken.*;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.Jws;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.security.SignatureException;
-import java.util.HashMap;
-import javax.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.SneakyThrows;
-import org.springframework.http.HttpStatus;
-import org.jetbrains.annotations.NotNull;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.client.HttpClientErrorException.Forbidden;
-import org.springframework.web.filter.OncePerRequestFilter;
-
-import javax.crypto.SecretKey;
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
-import org.springframework.web.server.ResponseStatusException;
+import javax.crypto.SecretKey;
+import javax.servlet.FilterChain;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.SneakyThrows;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.filter.OncePerRequestFilter;
 
 @AllArgsConstructor
 public class JwtTokenVerifier extends OncePerRequestFilter {
@@ -36,16 +32,11 @@ public class JwtTokenVerifier extends OncePerRequestFilter {
     private final SecretKey secretKey;
     private final JwtConfiguration jwtConfiguration;
 
-    public JwtTokenVerifier(SecretKey secretKey, JwtConfiguration jwtConfiguration) {
-        this.secretKey = secretKey;
-        this.jwtConfiguration = jwtConfiguration;
-    }
-
     @Override
     @SneakyThrows
     protected void doFilterInternal(HttpServletRequest request,
-                                    HttpServletResponse response,
-                                    FilterChain filterChain) throws ServletException, IOException {
+        @org.jetbrains.annotations.NotNull HttpServletResponse response,
+        @org.jetbrains.annotations.NotNull FilterChain filterChain) {
 
         String authorizationHeader = request.getHeader(jwtConfiguration.getAuthorizationHeader());
 
@@ -69,15 +60,15 @@ public class JwtTokenVerifier extends OncePerRequestFilter {
             Set<SimpleGrantedAuthority> simpleGrantedAuthorities = getAuthority(authorities);
 
             Authentication authentication = new UsernamePasswordAuthenticationToken(
-                    subject,
-                    null,
-                    simpleGrantedAuthorities
+                subject,
+                null,
+                simpleGrantedAuthorities
             );
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
 
-        } catch (Exception  e) {
+        } catch (Exception e) {
             response.sendError(403);
             return;
         }
@@ -94,18 +85,18 @@ public class JwtTokenVerifier extends OncePerRequestFilter {
     @NotNull
     private Set<SimpleGrantedAuthority> getAuthority(List<Map<String, String>> authorities) {
         return authorities.stream()
-                .map(auth -> new SimpleGrantedAuthority(auth.get("authority")))
-                .collect(Collectors.toSet());
+            .map(auth -> new SimpleGrantedAuthority(auth.get("authority")))
+            .collect(Collectors.toSet());
     }
 
 
     private Jws<Claims> decode(String token) {
         try {
             return Jwts
-                    .parserBuilder()
-                    .setSigningKey(secretKey)
-                    .build()
-                    .parseClaimsJws(token);
+                .parserBuilder()
+                .setSigningKey(secretKey)
+                .build()
+                .parseClaimsJws(token);
         } catch (ExpiredJwtException | UnsupportedJwtException | MalformedJwtException | SignatureException | IllegalArgumentException e) {
             throw new APIRequestException("JTW TOKEN EXPIRED!");
         }
