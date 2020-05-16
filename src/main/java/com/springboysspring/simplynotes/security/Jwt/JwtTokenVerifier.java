@@ -54,7 +54,6 @@ public class JwtTokenVerifier extends OncePerRequestFilter {
 
             String subject = jwsBody.getSubject(); // The Actual username that we pass to subject variable
 
-            // förstår inte
             List<Map<String, String>> authorities = (List<Map<String, String>>) jwsBody.get("authorities");
 
             Set<SimpleGrantedAuthority> simpleGrantedAuthorities = getAuthority(authorities);
