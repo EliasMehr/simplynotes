@@ -10,6 +10,7 @@ import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.http.HttpStatus;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -35,6 +36,11 @@ public class JwtTokenVerifier extends OncePerRequestFilter {
     private final SecretKey secretKey;
     private final JwtConfiguration jwtConfiguration;
 
+    public JwtTokenVerifier(SecretKey secretKey, JwtConfiguration jwtConfiguration) {
+        this.secretKey = secretKey;
+        this.jwtConfiguration = jwtConfiguration;
+    }
+
     @Override
     @SneakyThrows
     protected void doFilterInternal(HttpServletRequest request,
@@ -58,7 +64,6 @@ public class JwtTokenVerifier extends OncePerRequestFilter {
             String subject = jwsBody.getSubject(); // The Actual username that we pass to subject variable
 
             // förstår inte
-
             List<Map<String, String>> authorities = (List<Map<String, String>>) jwsBody.get("authorities");
 
             Set<SimpleGrantedAuthority> simpleGrantedAuthorities = getAuthority(authorities);
@@ -68,6 +73,7 @@ public class JwtTokenVerifier extends OncePerRequestFilter {
                     null,
                     simpleGrantedAuthorities
             );
+
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
 

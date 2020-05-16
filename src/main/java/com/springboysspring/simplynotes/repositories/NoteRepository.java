@@ -11,5 +11,6 @@ import java.util.UUID;
 @Repository
 public interface NoteRepository extends JpaRepository<Note, UUID> {
 
-    List<Note> findAllByOwner(User user);
+    public List<Note> findAllByOwner(User user);
+
 }

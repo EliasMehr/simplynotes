@@ -9,20 +9,23 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.UUID;
 
 @RestController
+@RequestMapping("/notes")
 public class NoteController {
 
-    private final NoteService noteService;
+    private NoteService noteService;
+
     @Autowired
     public NoteController(NoteService noteService) {
         this.noteService = noteService;
     }
 
     @PreAuthorize("hasRole('USER')")
-    @GetMapping("/notes/user/{id}")
+    @GetMapping("/user/{id}")
     public ResponseEntity<List<Note>> getNotesByUserID(@PathVariable UUID id) {
         List<Note> response;
         try {
@@ -33,55 +36,63 @@ public class NoteController {
         return ResponseEntity.ok(response);
     }
 
+    @Transactional
     @PreAuthorize("hasRole('USER')")
-    @PostMapping("/notes/user/{id}")
+    @PostMapping("/user/{id}")
     public ResponseEntity<String> addNoteToUserId(@PathVariable UUID id, @RequestBody Note note) {
         try {
             noteService.addNoteToUserId(id, note);
-            return ResponseEntity.status(HttpStatus.OK).body("Note added to user");
+            return ResponseEntity.ok("Note added to user");
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
     }
 
+    @Transactional
     @PreAuthorize("hasRole('USER')")
-    @PutMapping("/notes/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<String> updateNoteById(@PathVariable UUID id, @RequestBody Note note) {
         try {
             noteService.updateNoteById(id, note);
-            return ResponseEntity.status(HttpStatus.OK).body("Note updated");
+            return ResponseEntity.ok("Note updated");
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
     }
 
+    @Transactional
     @PreAuthorize("hasRole('USER')")
-    @DeleteMapping("/notes/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteNoteById(@PathVariable UUID id) {
         try {
             noteService.deleteNoteById(id);
-            return ResponseEntity.status(HttpStatus.OK).body("Note was deleted");
+            return ResponseEntity.ok("Note was deleted");
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
     }
 
+    @Transactional
     @PreAuthorize("hasRole('USER')")
-    @GetMapping("/notes/{noteId}/user/{userId}")
-    public void sendNoteToFriend(@PathVariable UUID noteId,
-                                 UUID userId,
-                                 @RequestParam String friendName) { // /notes/{noteId}/user/{userId}?friendName=Fazli
-        // find note by id
-        // find user and then his friend == friendName
-        // make new Note with copy users note attr
+    @GetMapping("/{noteId}/friend/{friendId}")
+    public ResponseEntity<String> sendNoteToFriend(@PathVariable UUID noteId, @PathVariable UUID friendId) {
+        try {
+            noteService.sendNoteToFriend(noteId, friendId);
+            return ResponseEntity.ok("Note was sent to friend");
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
     }
 
+    @Transactional
     @PreAuthorize("hasRole('USER')")
-    @GetMapping("/notes/{id}/convert")
-    public void convertNoteAsTodo(@PathVariable UUID id) {
-        // find note by id
-        // copy note, create to.do
-        // delete note
-        // add to.do to db
+    @GetMapping("/{id}/convert")
+    public ResponseEntity<String> convertNoteAsTodo(@PathVariable UUID id) {
+        try {
+            noteService.convertNoteAsTodo(id);
+            return ResponseEntity.ok("Note was converted to a Todo");
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
     }
 }
