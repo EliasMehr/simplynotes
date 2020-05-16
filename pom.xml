@@ -15,7 +15,7 @@
     <description>Demo project for Spring Boot</description>
 
     <properties>
-        <java.version>13</java.version>
+        <java.version>14</java.version>
     </properties>
 
     <dependencies>
@@ -99,7 +99,7 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.8.1</version>
                 <configuration>
-                    <release>13</release> <!-- <release>13/14/15</release> -->
+                    <release>14</release> <!-- <release>13/14/15</release> -->
                     <compilerArgs>--enable-preview</compilerArgs>
                 </configuration>
             </plugin>
