@@ -1,9 +1,7 @@
 package com.springboysspring.simplynotes.services;
 
 import com.springboysspring.simplynotes.models.ToDo;
-import com.springboysspring.simplynotes.models.User;
 import com.springboysspring.simplynotes.repositories.ToDoRepository;
-import com.springboysspring.simplynotes.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,28 +13,21 @@ import java.util.UUID;
 public
 class ToDoService {
     private ToDoRepository toDoRepository;
-    private UserRepository userRepository;
+    private UserService userService;
+
 
     @Autowired
-    public ToDoService(ToDoRepository toDoRepository, UserRepository userRepository) {
+    public ToDoService(ToDoRepository toDoRepository, UserService userService) {
         this.toDoRepository = toDoRepository;
-        this.userRepository = userRepository;
-    }
-
-    public User getUser(UUID id) throws Exception { // Kanske kan vara en metod i userService ist
-        Optional<User> owner = userRepository.findById(id);
-        if (owner.isPresent()) {
-            return owner.get();
-        }
-        throw new Exception("User not Found");
+        this.userService = userService;
     }
 
     public List<ToDo> getTodosByUserID(UUID id) throws Exception {
-        return toDoRepository.findAllByOwner(getUser(id));
+        return toDoRepository.findAllByOwner(userService.getUser(id));
     }
 
     public void addTodoToUserId(UUID id, ToDo toDo) throws Exception {
-        getUser(id).addTodo(toDo);
+        userService.getUser(id).addTodo(toDo);
         try {
             toDoRepository.save(toDo);
         } catch (Exception e) {

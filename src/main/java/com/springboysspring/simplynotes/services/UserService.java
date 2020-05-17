@@ -93,4 +93,12 @@ public class UserService {
         userHandler.checkForAuthentication(optionalUser.get(), authenticatedUserEmail);
         return new ArrayList<>(friendshipRepository.findAllByOwnerAndFriendshipStatus(optionalUser.get(), friendshipStatus));
     }
+
+    public User getUser(UUID id) throws Exception {
+        Optional<User> owner = userRepository.findById(id);
+        if (owner.isPresent()) {
+            return owner.get();
+        }
+        throw new Exception("User not Found");
+    }
 }
