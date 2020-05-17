@@ -14,7 +14,6 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/notes")
 public class NoteController {
 
     private NoteService noteService;
@@ -25,7 +24,7 @@ public class NoteController {
     }
 
     @PreAuthorize("hasRole('USER')")
-    @GetMapping("/user/{id}")
+    @GetMapping("/notes/user/{id}")
     public ResponseEntity<List<Note>> getNotesByUserID(@PathVariable UUID id) {
         List<Note> response;
         try {
@@ -38,7 +37,7 @@ public class NoteController {
 
     @Transactional
     @PreAuthorize("hasRole('USER')")
-    @PostMapping("/user/{id}")
+    @PostMapping("/notes/user/{id}")
     public ResponseEntity<String> addNoteToUserId(@PathVariable UUID id, @RequestBody Note note) {
         try {
             noteService.addNoteToUserId(id, note);
@@ -50,7 +49,7 @@ public class NoteController {
 
     @Transactional
     @PreAuthorize("hasRole('USER')")
-    @PutMapping("/{id}")
+    @PutMapping("/notes/{id}")
     public ResponseEntity<String> updateNoteById(@PathVariable UUID id, @RequestBody Note note) {
         try {
             noteService.updateNoteById(id, note);
@@ -62,7 +61,7 @@ public class NoteController {
 
     @Transactional
     @PreAuthorize("hasRole('USER')")
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/notes/{id}")
     public ResponseEntity<String> deleteNoteById(@PathVariable UUID id) {
         try {
             noteService.deleteNoteById(id);
@@ -74,7 +73,7 @@ public class NoteController {
 
     @Transactional
     @PreAuthorize("hasRole('USER')")
-    @GetMapping("/{noteId}/friend/{friendId}")
+    @GetMapping("/notes/{noteId}/friend/{friendId}")
     public ResponseEntity<String> sendNoteToFriend(@PathVariable UUID noteId, @PathVariable UUID friendId) {
         try {
             noteService.sendNoteToFriend(noteId, friendId);
@@ -86,7 +85,7 @@ public class NoteController {
 
     @Transactional
     @PreAuthorize("hasRole('USER')")
-    @GetMapping("/{id}/convert")
+    @GetMapping("/notes/{id}/convert")
     public ResponseEntity<String> convertNoteAsTodo(@PathVariable UUID id) {
         try {
             noteService.convertNoteAsTodo(id);
