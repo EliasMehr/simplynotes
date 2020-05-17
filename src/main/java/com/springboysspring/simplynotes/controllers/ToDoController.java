@@ -13,7 +13,6 @@ import javax.transaction.Transactional;
 import java.util.List;
 import java.util.UUID;
 
-@RequestMapping("/todos")
 @RestController
 public class ToDoController {
     private ToDoService toDoService;
@@ -24,7 +23,7 @@ public class ToDoController {
     }
 
     @PreAuthorize("hasRole('USER')")
-    @GetMapping("/user/{id}")
+    @GetMapping("/todos/user/{id}")
     public ResponseEntity<List<ToDo>> getTodosByUserID(@PathVariable UUID id) {
         List<ToDo> response;
         try {
@@ -37,7 +36,7 @@ public class ToDoController {
 
     @Transactional
     @PreAuthorize("hasRole('USER')")
-    @PostMapping("/user/{id}")
+    @PostMapping("/todos/user/{id}")
     public ResponseEntity<String> addTodoToUserId(@PathVariable UUID id, @RequestBody ToDo toDo) {
         try {
             toDoService.addTodoToUserId(id, toDo);
@@ -49,7 +48,7 @@ public class ToDoController {
 
     @Transactional
     @PreAuthorize("hasRole('USER')")
-    @PutMapping("/{id}")
+    @PutMapping("/todos/{id}")
     public ResponseEntity<String> updateTodoById(@PathVariable UUID id, @RequestBody ToDo toDo) {
         try {
             toDoService.updateTodoById(id, toDo);
@@ -61,7 +60,7 @@ public class ToDoController {
 
     @Transactional
     @PreAuthorize("hasRole('USER')")
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/todos/{id}")
     public ResponseEntity<String> deleteTodoById(@PathVariable UUID id) {
         try {
             toDoService.deleteTodoById(id);

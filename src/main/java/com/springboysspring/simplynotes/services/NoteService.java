@@ -5,7 +5,6 @@ import com.springboysspring.simplynotes.models.ToDo;
 import com.springboysspring.simplynotes.models.User;
 import com.springboysspring.simplynotes.repositories.NoteRepository;
 import com.springboysspring.simplynotes.repositories.ToDoRepository;
-import com.springboysspring.simplynotes.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,14 +16,14 @@ import java.util.UUID;
 public class NoteService {
 
     private NoteRepository noteRepository;
-    private UserRepository userRepository;
     private ToDoRepository toDoRepository;
+    private UserService userService;
 
     @Autowired
-    public NoteService(NoteRepository noteRepository, UserRepository userRepository, ToDoRepository toDoRepository) {
+    public NoteService(NoteRepository noteRepository, ToDoRepository toDoRepository, UserService userService) {
         this.noteRepository = noteRepository;
-        this.userRepository = userRepository;
         this.toDoRepository = toDoRepository;
+        this.userService = userService;
     }
 
     private void isNoteValid(Note note) throws Exception {
@@ -33,23 +32,15 @@ public class NoteService {
         }
     }
 
-    public User getUser(UUID id) throws Exception { // Kanske kan vara en metod i userService ist
-        Optional<User> owner = userRepository.findById(id);
-        if (owner.isPresent()) {
-            return owner.get();
-        }
-        throw new Exception("User not Found");
-    }
-
     public List<Note> getNotesByUserID(UUID id) throws Exception {
-        return noteRepository.findAllByOwner(getUser(id));
+        return noteRepository.findAllByOwner(userService.getUser(id));
     }
 
 
     public void addNoteToUserId(UUID id, Note note) throws Exception {
         isNoteValid(note);
 
-        getUser(id).addNote(note);
+        userService.getUser(id).addNote(note);
         try {
             noteRepository.save(note);
         } catch (Exception e) {
@@ -86,10 +77,11 @@ public class NoteService {
         Optional<Note> note = noteRepository.findById(noteId);
         if (note.isPresent()) {
             Note noteToFriend = new Note();
-            noteToFriend.setOwner(getUser(friendId));
+            User friend = userService.getUser(friendId);
+            noteToFriend.setOwner(friend);
             noteToFriend.setTitle(note.get().getTitle());
             noteToFriend.setContent(String.format("%s\n\nFrom: %s", note.get().getContent(), note.get().getOwner().getFirstName()));
-            getUser(friendId).addNote(noteToFriend);
+            friend.addNote(noteToFriend);
 
             try {
                 noteRepository.save(noteToFriend);
