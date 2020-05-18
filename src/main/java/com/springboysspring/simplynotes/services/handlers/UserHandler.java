@@ -25,57 +25,34 @@ public class UserHandler {
 
     @Transactional
     public void invoke(UUID userId, UUID friendId, BiConsumer<User, User> handleTheUserRequest) {
-
-        Optional<User> user = userRepository.findById(userId);
-        if (user.isPresent()) {
-            User currentUser = user.get();
-            verifyUserInputOrElseThrowException(
-                isUserEmailSameAsAuthenticatedUserEmail(authenticatedUserEmail.getAuthenticatedUserEmail(), currentUser),
-                "You dont have the permission to add/delete friends for other users!");
-
-            verifyUserInputOrElseThrowException(
-                userId.equals(friendId),
-                "You cannot add/delete yourself as a friend!");
-
-            Optional<User> friend = userRepository.findById(friendId);
-            if (friend.isPresent()) {
-                User friendObject = friend.get();
-                handleTheUserRequest.accept(currentUser, friendObject);
-            } else {
-                throw new APIRequestException(String.format("Friend with the id: %s does not exists!", friendId));
-            }
-            userRepository.save(currentUser);
-        } else {
-            throw new APIRequestException(String.format("User with the id: %s does not exists!", userId));
-        }
+        User currentUser = verifyInputtedId(userId);
+        User friendObject = verifyInputtedId(friendId);
+        checkForAuthentication(currentUser, authenticatedUserEmail.getAuthenticatedUserEmail());
+        checkBooleanOrElseThrow(userId.equals(friendId), "You cannot add/delete yourself as a friend!");
+        handleTheUserRequest.accept(currentUser, friendObject);
+        userRepository.save(currentUser);
     }
 
     public void checkForAuthentication(User currentUser, String authenticatedUserEmail) {
         boolean isUserAuthenticated = isUserEmailSameAsAuthenticatedUserEmail(authenticatedUserEmail, currentUser);
-        verifyUserInputOrElseThrowException(isUserAuthenticated, "Permission denied!");
+        checkBooleanOrElseThrow(isUserAuthenticated, "You dont have the permission to add/delete friends for other users!");
     }
 
-    public void isUserAMember(UUID userId, Optional<User> optionalFriend) {
-        verifyUserInputOrElseThrowException(
-            optionalFriend.isEmpty(),
-            String.format("User with id: %s does not exists", userId));
+    public User verifyInputtedId(UUID userId) {
+        Optional<User> optionalUser = userRepository.findById(userId);
+        checkBooleanOrElseThrow(optionalUser.isEmpty(), String.format("User with id: %s does not exists", userId));
+        return optionalUser.get();
+    }
+
+    public void checkBooleanOrElseThrow(boolean userInputtedValue, String message) {
+        if (userInputtedValue) {
+            throw new APIRequestException(message);
+        }
     }
 
     public boolean isUserEmailSameAsAuthenticatedUserEmail(String authenticatedUserEmail, User currentUser) {
         return !currentUser.getEmail().contentEquals(authenticatedUserEmail);
     }
 
-    public void verifyUserInputOrElseThrowException(boolean isUserInputWrong, String message) {
-        if (isUserInputWrong) {
-            throw new APIRequestException(message);
-        }
-    }
 
-    public void verifyUsers(UUID userId, UUID friendId) {
-        Optional<User> optionalUser = userRepository.findById(userId);
-        isUserAMember(userId, optionalUser);
-        Optional<User> friendOptional = userRepository.findById(friendId);
-        isUserAMember(friendId, friendOptional);
-        checkForAuthentication(optionalUser.get(), authenticatedUserEmail.getAuthenticatedUserEmail());
-    }
 }

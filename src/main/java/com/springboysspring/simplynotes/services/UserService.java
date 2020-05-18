@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.function.BiConsumer;
-import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -43,8 +42,7 @@ public class UserService {
 
     public void register(User user) {
         Optional<User> isEmailTaken = userRepository.findByEmail(user.getEmail());
-        userHandler.verifyUserInputOrElseThrowException(
-            isEmailTaken.isPresent(),
+        userHandler.checkBooleanOrElseThrow(isEmailTaken.isPresent(),
             String.format("Email %s is already taken!", user.getEmail()));
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
@@ -65,7 +63,9 @@ public class UserService {
     }
 
     public String changeFriendshipStatus(UUID userId, UUID friendId, FriendshipStatus status) {
-       userHandler.verifyUsers(userId, friendId);
+        userHandler.verifyInputtedId(userId);
+        userHandler.verifyInputtedId(friendId);
+
         switch (status) {
             case ACCEPTED -> {
                 changeStatus(userId, friendId, Friendship::acceptFriendRequest);
@@ -75,30 +75,23 @@ public class UserService {
                 changeStatus(userId, friendId, Friendship::declineFriendRequest);
                 return "Friend request declined successfully!";
             }
-            default -> throw new APIRequestException(String.format("%s is not an alternative! Please choose ACCEPTED or DECLINED.",status));
+            default -> throw new APIRequestException(
+                String.format("%s is not an alternative! Please choose ACCEPTED or DECLINED.", status));
         }
     }
 
-    private void changeStatus(UUID userId,
-        UUID friendId,
-        BiConsumer<Friendship, Friendship> changeFriendshipStatus) {
-        friendshipHandler
-            .invoke(userId, friendId, changeFriendshipStatus);
+    private void changeStatus(UUID userId, UUID friendId, BiConsumer<Friendship, Friendship> changeFriendshipStatus) {
+        friendshipHandler.invoke(userId, friendId, changeFriendshipStatus);
     }
 
     public List<Friendship> getFriendsByStatus(UUID userId, FriendshipStatus friendshipStatus) {
-        Optional<User> optionalUser = userRepository.findById(userId);
-        userHandler.isUserAMember(userId, optionalUser);
+        User currentUser = userHandler.verifyInputtedId(userId);
         String authenticatedUserEmail = this.authenticatedUserEmail.getAuthenticatedUserEmail();
-        userHandler.checkForAuthentication(optionalUser.get(), authenticatedUserEmail);
-        return new ArrayList<>(friendshipRepository.findAllByOwnerAndFriendshipStatus(optionalUser.get(), friendshipStatus));
+        userHandler.checkForAuthentication(currentUser, authenticatedUserEmail);
+        return new ArrayList<>(friendshipRepository.findAllByOwnerAndFriendshipStatus(currentUser, friendshipStatus));
     }
 
-    public User getUser(UUID id) throws Exception {
-        Optional<User> owner = userRepository.findById(id);
-        if (owner.isPresent()) {
-            return owner.get();
-        }
-        throw new Exception("User not Found");
+    public User getUser(UUID id) {
+        return userHandler.verifyInputtedId(id);
     }
 }
