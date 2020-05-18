@@ -27,15 +27,15 @@ public class UserHandler {
     public void invoke(UUID userId, UUID friendId, BiConsumer<User, User> handleTheUserRequest) {
         User currentUser = verifyInputtedId(userId);
         User friendObject = verifyInputtedId(friendId);
-        checkForAuthentication(currentUser, authenticatedUserEmail.getAuthenticatedUserEmail());
+        checkForAuthentication(currentUser);
         checkBooleanOrElseThrow(userId.equals(friendId), "You cannot add/delete yourself as a friend!");
         handleTheUserRequest.accept(currentUser, friendObject);
         userRepository.save(currentUser);
     }
 
-    public void checkForAuthentication(User currentUser, String authenticatedUserEmail) {
-        boolean isUserAuthenticated = isUserEmailSameAsAuthenticatedUserEmail(authenticatedUserEmail, currentUser);
-        checkBooleanOrElseThrow(isUserAuthenticated, "You dont have the permission to add/delete friends for other users!");
+    public void checkForAuthentication(User currentUser) {
+        boolean isUserAuthenticated = isUserEmailSameAsAuthenticatedUserEmail( currentUser);
+        checkBooleanOrElseThrow(!isUserAuthenticated, "You dont have the permission to add/delete friends for other users!");
     }
 
     public User verifyInputtedId(UUID userId) {
@@ -50,8 +50,8 @@ public class UserHandler {
         }
     }
 
-    public boolean isUserEmailSameAsAuthenticatedUserEmail(String authenticatedUserEmail, User currentUser) {
-        return !currentUser.getEmail().contentEquals(authenticatedUserEmail);
+    public boolean isUserEmailSameAsAuthenticatedUserEmail( User currentUser) {
+        return currentUser.getEmail().contentEquals(authenticatedUserEmail.getAuthenticatedUserEmail());
     }
 
 

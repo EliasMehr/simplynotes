@@ -76,7 +76,8 @@ public class UserService {
                 return "Friend request declined successfully!";
             }
             default -> throw new APIRequestException(
-                String.format("%s is not an alternative! Please choose ACCEPTED or DECLINED.", status));
+                String.format("%s is"
+                    + " not an alternative! Please choose ACCEPTED or DECLINED.", status));
         }
     }
 
@@ -86,8 +87,7 @@ public class UserService {
 
     public List<Friendship> getFriendsByStatus(UUID userId, FriendshipStatus friendshipStatus) {
         User currentUser = userHandler.verifyInputtedId(userId);
-        String authenticatedUserEmail = this.authenticatedUserEmail.getAuthenticatedUserEmail();
-        userHandler.checkForAuthentication(currentUser, authenticatedUserEmail);
+        userHandler.checkForAuthentication(currentUser);
         return new ArrayList<>(friendshipRepository.findAllByOwnerAndFriendshipStatus(currentUser, friendshipStatus));
     }
 

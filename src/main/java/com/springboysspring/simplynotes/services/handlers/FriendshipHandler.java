@@ -54,6 +54,7 @@ public class FriendshipHandler {
         }
     }
 
+
     public boolean isFriendshipStatus(Friendship friendship, FriendshipStatus friendshipStatus){
         return friendship.getFriendshipStatus()==friendshipStatus;
     }
