@@ -25,11 +25,7 @@ public class FriendshipHandler {
     }
 
     @Transactional
-    public void invoke(
-        UUID userId,
-        UUID friendId,
-        BiConsumer<Friendship, Friendship> changeFriendshipStatus
-    ) {
+    public void invoke(UUID userId, UUID friendId, BiConsumer<Friendship, Friendship> changeFriendshipStatus) {
 
         Friendship currentUserFriendship = getFriendship(userId, friendId);
         Friendship friendsFriendship = getFriendship(friendId, userId);
