@@ -22,19 +22,16 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder;
-    private final AuthenticatedUserEmail authenticatedUserEmail;
     private final UserHandler userHandler;
     private final FriendshipRepository friendshipRepository;
     private final FriendshipHandler friendshipHandler;
 
     @Autowired
     public UserService(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder,
-        AuthenticatedUserEmail authenticatedUserEmail,
         UserHandler userHandler, FriendshipRepository friendshipRepository,
         FriendshipHandler friendshipHandler) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
-        this.authenticatedUserEmail = authenticatedUserEmail;
         this.userHandler = userHandler;
         this.friendshipRepository = friendshipRepository;
         this.friendshipHandler = friendshipHandler;

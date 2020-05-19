@@ -4,7 +4,6 @@ import com.springboysspring.simplynotes.exceptions.APIRequestException;
 import com.springboysspring.simplynotes.models.User;
 import com.springboysspring.simplynotes.repositories.UserRepository;
 import com.springboysspring.simplynotes.services.AuthenticatedUserEmail;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.function.BiConsumer;
 import javax.transaction.Transactional;
@@ -34,14 +33,14 @@ public class UserHandler {
     }
 
     public void checkForAuthentication(User currentUser) {
-        boolean isUserAuthenticated = isUserEmailSameAsAuthenticatedUserEmail( currentUser);
+        boolean isUserAuthenticated = isUserEmailSameAsAuthenticatedUserEmail(currentUser);
         checkBooleanOrElseThrow(!isUserAuthenticated, "You dont have the permission to add/delete friends for other users!");
     }
 
     public User verifyInputtedId(UUID userId) {
-        Optional<User> optionalUser = userRepository.findById(userId);
-        checkBooleanOrElseThrow(optionalUser.isEmpty(), String.format("User with id: %s does not exists", userId));
-        return optionalUser.get();
+        return userRepository
+            .findById(userId)
+            .orElseThrow(() -> new APIRequestException(String.format("User with id: %s does not exists", userId)));
     }
 
     public void checkBooleanOrElseThrow(boolean userInputtedValue, String message) {
@@ -50,7 +49,7 @@ public class UserHandler {
         }
     }
 
-    public boolean isUserEmailSameAsAuthenticatedUserEmail( User currentUser) {
+    public boolean isUserEmailSameAsAuthenticatedUserEmail(User currentUser) {
         return currentUser.getEmail().contentEquals(authenticatedUserEmail.getAuthenticatedUserEmail());
     }
 
