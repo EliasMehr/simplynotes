@@ -31,16 +31,11 @@ public class FriendshipHandler {
         BiConsumer<Friendship, Friendship> changeFriendshipStatus
     ) {
 
-        Optional<Friendship> ownerFriendship = friendshipRepository.findByOwnerIdAndFriendId(userId, friendId);
-        Optional<Friendship> friendFriendship = friendshipRepository.findByOwnerIdAndFriendId(friendId, userId);
+        Friendship currentUserFriendship = getFriendship(userId, friendId);
+        Friendship friendsFriendship = getFriendship(friendId, userId);
 
-        if (friendFriendship.isPresent() && ownerFriendship.isPresent()) {
-            Friendship friendsFriendship = friendFriendship.get();
-            Friendship currentUserFriendship = ownerFriendship.get();
-
-            boolean ifFriendshipStatusPending = isFriendshipStatus(friendsFriendship, PENDING);
-            boolean isFriendshipStatusDeclined = isFriendshipStatus(friendsFriendship, DECLINED);
-
+            boolean ifFriendshipStatusPending = doesFriendshipHaveStatus(friendsFriendship, PENDING);
+            boolean isFriendshipStatusDeclined = doesFriendshipHaveStatus(friendsFriendship, DECLINED);
 
             if (ifFriendshipStatusPending || isFriendshipStatusDeclined) {
                 changeFriendshipStatus.accept(currentUserFriendship, friendsFriendship);
@@ -49,13 +44,14 @@ public class FriendshipHandler {
                 // User may have declined other users request or they may be already friends!
                 throw new APIRequestException("Permission denied! Users have already sent friend request to each other!");
             }
-        } else {
-            throw new APIRequestException("Users have not a pending request");
-        }
     }
 
+    private Friendship getFriendship(UUID userId, UUID friendId) {
+        return friendshipRepository.findByOwnerIdAndFriendId(userId, friendId)
+            .orElseThrow(() -> new APIRequestException("Users have not a pending request"));
+    }
 
-    public boolean isFriendshipStatus(Friendship friendship, FriendshipStatus friendshipStatus){
+    public boolean doesFriendshipHaveStatus(Friendship friendship, FriendshipStatus friendshipStatus){
         return friendship.getFriendshipStatus()==friendshipStatus;
     }
 }

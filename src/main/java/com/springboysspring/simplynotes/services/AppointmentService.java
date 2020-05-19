@@ -2,7 +2,6 @@ package com.springboysspring.simplynotes.services;
 
 import com.springboysspring.simplynotes.models.Appointment;
 import com.springboysspring.simplynotes.models.Friendship;
-import com.springboysspring.simplynotes.models.FriendshipStatus;
 import com.springboysspring.simplynotes.models.User;
 import com.springboysspring.simplynotes.repositories.AppointmentRepository;
 import com.springboysspring.simplynotes.repositories.FriendshipRepository;
@@ -96,7 +95,7 @@ public class AppointmentService {
         Optional<Friendship> byOwnerIdAndFriendId = friendshipRepository.findByOwnerIdAndFriendId(currentUser, attendeeId);
 
         if (byOwnerIdAndFriendId.isPresent()) {
-            boolean friendshipStatus = friendshipHandler.isFriendshipStatus(byOwnerIdAndFriendId.get(), ACCEPTED);
+            boolean friendshipStatus = friendshipHandler.doesFriendshipHaveStatus(byOwnerIdAndFriendId.get(), ACCEPTED);
 
             if (friendshipStatus) {
                 if (appointmentById.isPresent()) {
