@@ -1,5 +1,6 @@
 package com.springboysspring.simplynotes.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Getter;
@@ -46,6 +47,7 @@ public class User {
     @Pattern(regexp = "^[_A-Za-z0-9-]+(.[_A-Za-z0-9-]+)@[A-Za-z0-9]+(.[A-Za-z0-9]+)(.[A-Za-z]{2,})$", message = "Invalid email format")
     private String email;
 
+    @JsonIgnore
     @NotBlank
     @Size(min = 6, max = 100)
     private String password;
