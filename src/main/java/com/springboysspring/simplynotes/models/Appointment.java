@@ -3,6 +3,7 @@ package com.springboysspring.simplynotes.models;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import javax.validation.constraints.Min;
@@ -26,6 +27,7 @@ public class Appointment {
     @Size(min = 1, max = 50)
     private String title;
 
+    @CreationTimestamp
     private LocalDateTime appointmentTime;
 
     @Size(max = 5000)
