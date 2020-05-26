@@ -36,7 +36,7 @@ public class Appointment {
     @Min(value = 0, message = "Only positive number of minutes allowed")
     private int estimatedTime;
 
-    @JsonIgnoreProperties({"appointments", "notes", "todos", "friendship"})
+    @JsonIgnoreProperties({"appointments", "notes", "todos", "friendships"})
     @ManyToMany
     @JoinTable(
             name = "appointment_users",
