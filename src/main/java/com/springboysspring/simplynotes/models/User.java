@@ -15,8 +15,7 @@ import java.util.UUID;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.data.jpa.repository.Query;
 
-import static com.springboysspring.simplynotes.models.FriendshipStatus.ACCEPTED;
-import static com.springboysspring.simplynotes.models.FriendshipStatus.PENDING;
+import static com.springboysspring.simplynotes.models.FriendshipStatus.*;
 import static javax.persistence.CascadeType.ALL;
 import static javax.persistence.FetchType.EAGER;
 
@@ -88,7 +87,7 @@ public class User {
         friendship.setFriendshipStatus(PENDING);
         friendships.add(friendship);
         Friendship friendFriendShip = new Friendship(friend, this);
-        friendFriendShip.setFriendshipStatus(PENDING);
+        friendFriendShip.setFriendshipStatus(SENT);
         friend.friendships.add(friendFriendShip);
     }
 
