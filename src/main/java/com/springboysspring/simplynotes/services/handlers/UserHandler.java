@@ -1,5 +1,6 @@
 package com.springboysspring.simplynotes.services.handlers;
 
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.springboysspring.simplynotes.exceptions.APIRequestException;
 import com.springboysspring.simplynotes.models.User;
 import com.springboysspring.simplynotes.repositories.UserRepository;
@@ -37,6 +38,7 @@ public class UserHandler {
         checkBooleanOrElseThrow(!isUserAuthenticated, "You dont have the permission to add/delete friends for other users!");
     }
 
+    @CanIgnoreReturnValue
     public User verifyInputtedId(UUID userId) {
         return userRepository
             .findById(userId)

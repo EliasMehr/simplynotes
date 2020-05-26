@@ -21,5 +21,6 @@ public interface FriendshipRepository extends JpaRepository<Friendship, UUID> {
 
 
      List<Friendship> findAllByOwnerAndFriendshipStatus(User owner, FriendshipStatus friendshipStatus);
+     List<Friendship> findAllByOwner(User owner);
 
 }

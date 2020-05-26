@@ -88,6 +88,12 @@ public class UserService {
         return new ArrayList<>(friendshipRepository.findAllByOwnerAndFriendshipStatus(currentUser, friendshipStatus));
     }
 
+    public List<Friendship> getAllFriends(UUID userId) {
+        User currentUser = userHandler.verifyInputtedId(userId);
+        userHandler.checkForAuthentication(currentUser);
+        return new ArrayList<>(friendshipRepository.findAllByOwner(currentUser));
+    }
+
     public User getUser(UUID id) {
         return userHandler.verifyInputtedId(id);
     }

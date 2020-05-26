@@ -2,6 +2,7 @@ package com.springboysspring.simplynotes.services.handlers;
 
 import static com.springboysspring.simplynotes.models.FriendshipStatus.DECLINED;
 import static com.springboysspring.simplynotes.models.FriendshipStatus.PENDING;
+import static com.springboysspring.simplynotes.models.FriendshipStatus.SENT;
 
 import com.springboysspring.simplynotes.exceptions.APIRequestException;
 import com.springboysspring.simplynotes.models.Friendship;
@@ -30,15 +31,16 @@ public class FriendshipHandler {
         Friendship currentUserFriendship = getFriendship(userId, friendId);
         Friendship friendsFriendship = getFriendship(friendId, userId);
 
-            boolean ifFriendshipStatusPending = doesFriendshipHaveStatus(friendsFriendship, PENDING);
+            boolean isCurrentUserFriendshipStatusPending = doesFriendshipHaveStatus(currentUserFriendship, PENDING);
+            boolean isFriendsFriendshipStatusSent = doesFriendshipHaveStatus(friendsFriendship, SENT);
             boolean isFriendshipStatusDeclined = doesFriendshipHaveStatus(friendsFriendship, DECLINED);
 
-            if (ifFriendshipStatusPending || isFriendshipStatusDeclined) {
+            if ((isCurrentUserFriendshipStatusPending && isFriendsFriendshipStatusSent) || isFriendshipStatusDeclined ) {
                 changeFriendshipStatus.accept(currentUserFriendship, friendsFriendship);
                 friendshipRepository.save(friendsFriendship);
             } else {
                 // User may have declined other users request or they may be already friends!
-                throw new APIRequestException("Permission denied! Users have already sent friend request to each other!");
+                throw new APIRequestException("Permission denied!");
             }
     }
 

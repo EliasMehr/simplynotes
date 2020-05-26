@@ -46,7 +46,7 @@ public class User {
     @Pattern(regexp = "^[_A-Za-z0-9-]+(.[_A-Za-z0-9-]+)@[A-Za-z0-9]+(.[A-Za-z0-9]+)(.[A-Za-z]{2,})$", message = "Invalid email format")
     private String email;
 
-    @JsonIgnore
+//    @JsonIgnore
     @NotBlank
     @Size(min = 6, max = 100)
     private String password;
@@ -84,10 +84,10 @@ public class User {
 
     public void addFriend(User friend) {
         Friendship friendship = new Friendship(this, friend);
-        friendship.setFriendshipStatus(PENDING);
+        friendship.setFriendshipStatus(SENT);
         friendships.add(friendship);
         Friendship friendFriendShip = new Friendship(friend, this);
-        friendFriendShip.setFriendshipStatus(SENT);
+        friendFriendShip.setFriendshipStatus(PENDING);
         friend.friendships.add(friendFriendShip);
     }
 

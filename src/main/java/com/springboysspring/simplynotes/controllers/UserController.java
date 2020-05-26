@@ -81,6 +81,18 @@ public class UserController {
     }
 
     @PreAuthorize("hasRole('USER')")
+    @GetMapping("/{userId}/friends")
+    public ResponseEntity<?> getUsersFriends(@PathVariable UUID userId) {
+        try {
+            List<Friendship> friendsByStatus = userService.getAllFriends(userId);
+            return ResponseEntity.ok().body(friendsByStatus);
+        } catch (Exception e) {
+            throw new ResponseStatusException(BAD_REQUEST, e.getMessage());
+        }
+    }
+
+
+    @PreAuthorize("hasRole('USER')")
     @GetMapping("/{userId}")
     public ResponseEntity<?> getFriendsByStatus(@PathVariable UUID userId,
         @RequestParam(name = "status") FriendshipStatus friendshipStatus) {
@@ -94,7 +106,9 @@ public class UserController {
 
     @PreAuthorize("hasRole('USER')")
     @PatchMapping("/{userId}/{friendId}")
-    public ResponseEntity<?> changeFriendshipStatus(@PathVariable UUID userId, @PathVariable UUID friendId,@RequestParam FriendshipStatus status) {
+    public ResponseEntity<?> changeFriendshipStatus(@PathVariable UUID userId,
+        @PathVariable UUID friendId,
+        @RequestParam FriendshipStatus status) {
         try {
             String message = userService.changeFriendshipStatus(userId, friendId, status);
             return ResponseEntity.ok().body(new Response(message));
