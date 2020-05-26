@@ -27,7 +27,7 @@ public class AppointmentController {
 
     // GET ALL APPOINTMENTS FOR USER
     @PreAuthorize("hasRole('USER')")
-    @GetMapping("manage-appointment/{id}")
+    @GetMapping("manage-appointments/{id}")
     public ResponseEntity<List<Appointment>> getAppointments(@PathVariable UUID id) {
         try {
             List<Appointment> allAppointments = appointmentService.getAllAppointmentsByUser(id);
