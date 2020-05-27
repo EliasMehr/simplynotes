@@ -105,7 +105,7 @@ public class UserController {
     }
 
     @PreAuthorize("hasRole('USER')")
-    @PatchMapping("/{userId}/{friendId}")
+    @GetMapping("/{userId}/{friendId}")
     public ResponseEntity<?> changeFriendshipStatus(@PathVariable UUID userId,
         @PathVariable UUID friendId,
         @RequestParam FriendshipStatus status) {
