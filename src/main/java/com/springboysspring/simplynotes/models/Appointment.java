@@ -27,7 +27,6 @@ public class Appointment {
     @Size(min = 1, max = 50)
     private String title;
 
-    @CreationTimestamp
     private LocalDateTime appointmentTime;
 
     @Size(max = 5000)
