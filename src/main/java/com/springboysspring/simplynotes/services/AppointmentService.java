@@ -79,6 +79,7 @@ public class AppointmentService {
             existingAppointment.get().setDescription(appointment.getDescription());
             existingAppointment.get().setEstimatedTime(appointment.getEstimatedTime());
             existingAppointment.get().setAppointmentTime(appointment.getAppointmentTime().plusHours(2));
+            existingAppointment.get().setAttendees(appointment.getAttendees());
             try {
                 Appointment updatedAppointment = existingAppointment.get();
                 appointmentRepository.save(updatedAppointment);
