@@ -27,6 +27,7 @@ class ToDoService {
     }
 
     public void addTodoToUserId(UUID id, ToDo toDo) throws Exception {
+        toDo.setDeadline(toDo.getDeadline().plusHours(2));
         userService.getUser(id).addTodo(toDo);
         try {
             toDoRepository.save(toDo);

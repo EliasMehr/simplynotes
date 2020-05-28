@@ -45,6 +45,8 @@ public class AppointmentService {
 
     // CREATE APPOINTMENTS FOR USER
     public void add(UUID userId, Appointment appointment) throws Exception {
+        appointment.setAppointmentTime(appointment.getAppointmentTime().plusHours(2));
+
         Optional<User> userById = userRepository.findById(userId);
 
         if (userById.isPresent()) {
@@ -76,6 +78,7 @@ public class AppointmentService {
             existingAppointment.get().setTitle(appointment.getTitle());
             existingAppointment.get().setDescription(appointment.getDescription());
             existingAppointment.get().setEstimatedTime(appointment.getEstimatedTime());
+            existingAppointment.get().setAppointmentTime(appointment.getAppointmentTime().plusHours(2));
             try {
                 Appointment updatedAppointment = existingAppointment.get();
                 appointmentRepository.save(updatedAppointment);
