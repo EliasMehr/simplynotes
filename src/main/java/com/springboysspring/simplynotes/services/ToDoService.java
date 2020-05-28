@@ -41,6 +41,7 @@ class ToDoService {
             oldToDo.get().setTitle(newToDo.getTitle());
             oldToDo.get().setContent(newToDo.getContent());
             oldToDo.get().setPriority(newToDo.getPriority());
+            oldToDo.get().setDeadline(newToDo.getDeadline());
             try {
                 toDoRepository.save(oldToDo.get());
             } catch (Exception e) {

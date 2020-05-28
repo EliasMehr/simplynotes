@@ -59,5 +59,4 @@ public class Friendship {
         this.setFriendshipStatus(DECLINED);
         friend.setFriendshipStatus(DECLINED);
     }
-
 }
